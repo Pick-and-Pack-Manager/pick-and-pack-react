@@ -3,40 +3,31 @@
 import "./App.css";
 import React from "react";
 import ReactDOM from "react-dom";
-import axios from "axios";
-import { BrowserRouter as Router, Route } from "react-router-dom";
-import Login from "Login";
-import Order from "Order";
-import Orders from "Orders";
-import Shipmetn from "Shipment";
-
-// Route rendering to the different URL Components
-ReactDOM.render(
-  <Router>
-    <div>
-      <Route exact path="/">
-        <LogIn />
-      </Route>
-      <Route path="/profile">
-        <Profile />
-      </Route>
-      <Route path="/orders">
-        <Orders />
-      </Route>
-      <Route path="/order/packing/:id">
-        <OrderPacking />
-      </Route>
-      <Route path="/order/shipment/:id">
-        <OrderShipment />
-      </Route>
-    </div>
-  </Router>,
-  node
-);
+import { BrowserRouter, Switch, Route } from "react-router-dom";
+import Login from "./Login";
+import Order from "./Order";
+import Orders from "./Orders";
+import Shipment from "./Shipment";
+import Nav from "./NavComponent";
+import Profile from "./Profile";
 
 class App extends React.Component {
   state = {};
-  // DO I NEED TO RENDER HERE IN THE APP? OR THE ROUTE TAKES CARE OF THAT?
+
+  // Route rendering
+  render() {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/" component={Login} />
+          <Route path="/Profile" component={Profile} />
+          <Route path="/Orders" component={Orders} />
+          <Route path="/order/packing/:id" component={Order} />
+          <Route path="/order/shipment/:id" component={Shipment} />
+        </Switch>
+      </BrowserRouter>
+    );
+  }
 }
 
 export default App;

@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 
-class Order extends Reacs.Component {
+class Order extends React.Component {
   state = {};
   render() {
     return <div> Prueba HTML</div>;
