@@ -7,56 +7,94 @@ class Orders extends React.Component {
   state = {
     initialDate: "",
     finalDate: "",
-    typeOrder: "",
+    kittingRoute: "",
+    orders: [
+      {
+        docNum: 1,
+        docDueDate: 2,
+        kittingDate: 3,
+        completingDate: 4,
+        Customer: {
+          CardName: 5,
+        },
+        orderComments: 6,
+        orderCategory: 7,
+        Lines: [1, 2, 3],
+      },
+      {
+        docNum: 1,
+        docDueDate: 2,
+        kittingDate: 3,
+        completingDate: 4,
+        Customer: {
+          CardName: 5,
+        },
+        orderComments: 6,
+        orderCategory: 7,
+        Lines: [1, 2, 3],
+      },
+    ],
   };
-	{/*FUNCTIONAS THAT UPDATE THE STATE WITH THE FILTERS*/}
-  updateInitialDate = () => {
-
-	}
+  // METHODS THAT SET THE STATE TO THE FILTER SELECTION, SO WHEN YOU COME BACK IN THIS WEBSITE, YOU HAVE THE TABLE FILTERED.
+  updateInitialDate = (e) => {
+    this.setState({
+      initialDate: e.target.value,
+    });
+  };
+  updateFinalDate = (e) => {
+    this.setState({
+      finalDate: e.target.value,
+    });
+  };
+  updateKittingRoute = (e) => {
+    this.setState({
+      kittingRoute: e.target.value,
+    });
+  };
   render() {
     return (
       <>
         {/*NAVIGATION SECTION*/}
         <Nav />
-        {/*FILTERS SECTION NEED TO ADD ICONS TO THE PROJECT*/}
+        {/*FILTERS SECTION - ITS MISSING THE ICONS*/}
         <section className="bg-light">
           <div className="container text-center bg-light py-3">
             <form method="get" action="/houses">
               <div className="row">
-                {/* FILTRO DE FECHA INICIAL*/}
-                <div class="col">
-                  <div class="input-group flex-nowrap">
+                {/* INITIAL DATE FILTER*/}
+                <div className="col">
+                  <div className="input-group flex-nowrap">
                     <input
                       type="date"
-                      class="form-control"
+                      className="form-control"
                       placeholder="Initial date"
                       name="InitialDateFilter"
                       onChange={(e) => this.updateInitialDate(e)}
                     />
                   </div>
                 </div>
-                {/*Fin del filtro*/}
-                {/* FILTRO DE FECHA FINAL*/}
-                <div class="col">
-                  <div class="input-group flex-nowrap">
+                {/*END OF FILTER*/}
+                {/* FINAL DATE FILTER*/}
+                <div className="col">
+                  <div className="input-group flex-nowrap">
                     <input
                       type="date"
-                      class="form-control"
+                      className="form-control"
                       placeholder="Final date"
                       name="FinalDateFilter"
                       onChange={(e) => this.updateFinalDate(e)}
                     />
                   </div>
                 </div>
-                {/*Fin del filtro*/}
-                {/* FILTRO DE FECHA TYPE COMMERCIAL OR LOCAL*/}
-                <div class="col">
-                  <div class="input-group">
-                    <label class="input-group-text">K. Route</label>
+                {/*END OF FILTER*/}
+                {/* KITTING DATE FILTER*/}
+                <div className="col">
+                  <div className="input-group">
+                    <label className="input-group-text">K. Route</label>
                     <select
-                      class="form-control"
+                      className="form-control"
                       name="kittingRouteFilter"
-                      onChange={(e) => this.updateKittingDate(e)}
+                      onChange={(e) => this.updateKittingRoute(e)}
                     >
                       <option value="Domestic">Domestic</option>
                       <option value="Commercial">Commercial</option>
@@ -65,8 +103,8 @@ class Orders extends React.Component {
                 </div>
                 {/*Fin del filtro*/}
                 {/*FILTER BUTTON*/}
-                <div class="col">
-                  <button class="btn btn-success">Filter</button>
+                <div className="col">
+                  <button className="btn btn-success">Filter</button>
                 </div>
                 {/*End of Filter Button*/}
               </div>
@@ -76,6 +114,7 @@ class Orders extends React.Component {
         {/*TABLE SECTION*/}
         <div className="container mt-5">
           <Table striped bordered hover>
+            {/*TABLE HEAD AND COLUMNS DEFINITION*/}
             <thead>
               <tr>
                 <th>docNum</th>
@@ -90,35 +129,53 @@ class Orders extends React.Component {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">Blah Blah</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">1234567</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-                <td>
-                  <a href="/packing/order/{{this.props.order.id}}">more text</a>
-                </td>
-              </tr>
+              {this.state.orders.map((order, index) => (
+                <tr key={index}>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.docNum}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.docDueDate}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.kittingDate}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.completingDate}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.Customer.CardName}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.orderComments}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.orderCategory}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {order.Lines}
+                    </a>
+                  </td>
+                  <td>
+                    <a href="/packing/order/{{this.props.order.id}}">MIN</a>
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </div>
