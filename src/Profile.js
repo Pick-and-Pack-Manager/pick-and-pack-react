@@ -1,31 +1,12 @@
 import React from "react";
 import "./App.css";
+import Nav from "./NavComponent.js";
 
-class Shipments extends React.Component {
+class Profile extends React.Component {
   state = {};
   render() {
-    return (
-      <div class="card-body">
-        <form method="post" action="/auth/login">
-          <label class="form-label">Email</label>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" name="email" />
-          </div>
-          <label class="form-label">Password</label>
-          <div class="input-group mb-3">
-            <input type="text" class="form-control" name="password" />
-          </div>
-          <button class="btn btn-success">Log In</button>
-        </form>
-        <p class="small inline py-2">
-          New to Airbnb?{" "}
-          <a class="card-link" href="/auth/signup">
-            Signup
-          </a>
-        </p>
-      </div>
-    );
+    return <div> Hello </div>;
   }
 }
 
-export default Shipments;
+export default Profile;

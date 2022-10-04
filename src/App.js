@@ -1,5 +1,5 @@
 // Importing libraries, CSS and Components.
-
+import axios from "axios";
 import "./App.css";
 import React from "react";
 import ReactDOM from "react-dom";
@@ -13,7 +13,15 @@ import Profile from "./Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
-  state = {};
+  state = {
+    orders: [],
+  };
+  readOrders = async () => {
+    let orders = await axios.get(process.env.REACT_APP_API_URL + "/orders");
+    this.setState({
+      orders: orders,
+    });
+  };
 
   // Route rendering
   render() {
