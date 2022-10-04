@@ -5,22 +5,33 @@ import Table from "react-bootstrap/Table";
 
 class Orders extends React.Component {
   state = {
-    initialDate: "",
-    finalDate: "",
-    kittingRoute: "",
     orders: [
       {
         docNum: 1,
         docDueDate: 2,
-        kittingDate: 3,
+        kittingDate: "10-10-2022",
         completingDate: 4,
         Customer: {
           CardName: 5,
         },
         orderComments: 6,
-        orderCategory: 7,
+        orderCategory: "C",
         Lines: [1, 2, 3],
       },
+      {
+        docNum: 1,
+        docDueDate: 2,
+        kittingDate: 10000,
+        completingDate: 4,
+        Customer: {
+          CardName: 5,
+        },
+        orderComments: 6,
+        orderCategory: "D",
+        Lines: [1, 2, 3],
+      },
+    ],
+    ordersOriginal: [
       {
         docNum: 1,
         docDueDate: 2,
@@ -30,27 +41,61 @@ class Orders extends React.Component {
           CardName: 5,
         },
         orderComments: 6,
-        orderCategory: 7,
+        orderCategory: "C",
+        Lines: [1, 2, 3],
+      },
+      {
+        docNum: 1,
+        docDueDate: 2,
+        kittingDate: 10000,
+        completingDate: 4,
+        Customer: {
+          CardName: 5,
+        },
+        orderComments: 6,
+        orderCategory: "D",
         Lines: [1, 2, 3],
       },
     ],
   };
+  // AT THE MOUNT WE CREATE ORDERS AND ORIGINAL ORDERS IN THE STATE
+  // {/*componentWillMount() {
+  //   this.setState({
+  //     orders: this.props.orders,
+  //     ordersOriginal: this.props.orders,
+  //   });
+  // }*/}
+
   // METHODS THAT SET THE STATE TO THE FILTER SELECTION, SO WHEN YOU COME BACK IN THIS WEBSITE, YOU HAVE THE TABLE FILTERED.
-  updateInitialDate = (e) => {
+  filterByInitialDate = (e) => {
+    let orders = this.state.orders;
+    let initialDateFilter = orders.filter((order) => order.kittingDate >= e);
     this.setState({
-      initialDate: e.target.value,
+      orders: initialDateFilter,
     });
   };
-  updateFinalDate = (e) => {
+  filterByFinalDate = (e) => {
     this.setState({
       finalDate: e.target.value,
     });
   };
-  updateKittingRoute = (e) => {
-    this.setState({
-      kittingRoute: e.target.value,
-    });
+  // THIS FILTER BY TYPE YOU HAVE TO BACK TO ALL TO SEARCH AGAIN. NEED TO FIX THIS BUG
+  filterByOrderCategory = (e) => {
+    if (e === "All") {
+      this.setState({
+        orders: this.state.ordersOriginal,
+      });
+    } else {
+      let orders = this.state.orders;
+      let orderCategoryFilter = orders.filter(
+        (order) => order.orderCategory == e
+      );
+      this.setState({
+        orders: orderCategoryFilter,
+      });
+    }
   };
+
   render() {
     return (
       <>
@@ -69,7 +114,7 @@ class Orders extends React.Component {
                       className="form-control"
                       placeholder="Initial date"
                       name="InitialDateFilter"
-                      onChange={(e) => this.updateInitialDate(e)}
+                      onChange={(e) => this.filterByInitialDate(e.target.value)}
                     />
                   </div>
                 </div>
@@ -82,7 +127,7 @@ class Orders extends React.Component {
                       className="form-control"
                       placeholder="Final date"
                       name="FinalDateFilter"
-                      onChange={(e) => this.updateFinalDate(e)}
+                      onChange={(e) => this.filterByFinalDate(e.target.value)}
                     />
                   </div>
                 </div>
@@ -90,14 +135,17 @@ class Orders extends React.Component {
                 {/* KITTING DATE FILTER*/}
                 <div className="col">
                   <div className="input-group">
-                    <label className="input-group-text">K. Route</label>
+                    <label className="input-group-text">Category</label>
                     <select
                       className="form-control"
-                      name="kittingRouteFilter"
-                      onChange={(e) => this.updateKittingRoute(e)}
+                      name="CategoryOrKittingRoute"
+                      onChange={(e) =>
+                        this.filterByOrderCategory(e.target.value)
+                      }
                     >
-                      <option value="Domestic">Domestic</option>
-                      <option value="Commercial">Commercial</option>
+                      <option value="All">All</option>
+                      <option value="D">D</option>
+                      <option value="C">C</option>
                     </select>
                   </div>
                 </div>
@@ -132,7 +180,7 @@ class Orders extends React.Component {
               {this.state.orders.map((order, index) => (
                 <tr key={index}>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <a href="/packing/order/{{this.state.order.docNum}}`">
                       {order.docNum}
                     </a>
                   </td>
