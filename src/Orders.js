@@ -168,11 +168,14 @@ class Orders extends React.Component {
                   </td>
                   <td>
                     <a href="/packing/order/{{this.props.order.id}}">
-                      {order.Lines}
+                      {order.Lines.length}
                     </a>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">MIN</a>
+                    <a href="/packing/order/{{this.props.order.id}}">
+                      {" "}
+                      {order.Lines.length * 0.75}
+                    </a>
                   </td>
                 </tr>
               ))}
