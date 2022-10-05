@@ -16,7 +16,7 @@ class App extends React.Component {
   state = {
     orders: [],
   };
-	{/*This retrieves all the orders from the backend, we will filter here maybe, if there are not to much. Maybe we can call only OPEN orders from backend/DB*/}
+	// {/*This retrieves all the orders from the backend, we will filter here maybe, if there are not to much. Maybe we can call only OPEN orders from backend/DB*/}
   readOrders = async () => {
     let orders = await axios.get(process.env.REACT_APP_API_URL + "/orders");
     this.setState({
