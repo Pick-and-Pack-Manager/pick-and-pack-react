@@ -244,7 +244,7 @@ class Orders extends React.Component {
               {this.state.orders.map((order, index) => (
                 <tr key={index}>
                   <td>
-                    <a href="/packing/order/{{this.state.order.docNum}}`">
+                    <a href="/packing/order/{{this.state.order.docNum}}">
                       {order.docNum}
                     </a>
                   </td>
@@ -280,13 +280,13 @@ class Orders extends React.Component {
                   </td>
                   <td>
                     <a href="/packing/order/{{this.props.order.id}}">
-                      {order.Lines.length}
+                      {order.orderItems.length}
                     </a>
                   </td>
                   <td>
                     <a href="/packing/order/{{this.props.order.id}}">
                       {" "}
-                      {order.Lines.length * 0.75}
+                      {order.orderItems.length * 0.75}
                     </a>
                   </td>
                 </tr>
