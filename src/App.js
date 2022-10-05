@@ -30,7 +30,7 @@ class App extends React.Component {
       <BrowserRouter>
         <Switch>
           <Route exact path="/" component={Login} />
-          <Route path="/Profile" component={Profile} />
+          <Route path="/profile" component={Profile} />
           <Route path="/Orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
