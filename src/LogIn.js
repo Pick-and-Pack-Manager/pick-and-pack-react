@@ -11,7 +11,7 @@ class Login extends React.Component {
 			<Card style={{ width: '30rem' }}>
 				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
 						<Form>
-									<Form.Group className="mb-3" controlId="formBasicEmail">
+									<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
 										<Form.Label>Email address</Form.Label>
 										<InputGroup className="mb-3">
 											<Form.Control
@@ -23,7 +23,7 @@ class Login extends React.Component {
 										</InputGroup>
 									</Form.Group>
 
-									<Form.Group className="mb-3" controlId="formBasicPassword">
+									<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 										<Form.Label>Password</Form.Label>
 										<Form.Control type="password" placeholder="Password" />
 										<Form.Text className="text-muted">
@@ -31,7 +31,7 @@ class Login extends React.Component {
 										</Form.Text>
 									</Form.Group>
 									<Button variant="primary" type="submit">
-										Submit
+										Login
 									</Button>
 								</Form>
 			</Card>
