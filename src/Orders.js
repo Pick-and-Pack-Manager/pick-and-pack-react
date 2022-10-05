@@ -225,7 +225,7 @@ class Orders extends React.Component {
         </section>
         {/*TABLE SECTION*/}
         <div className="container mt-5">
-          <Table striped bordered hover>
+          <Table striped bordered hover sm responsive="xl">
             {/*TABLE HEAD AND COLUMNS DEFINITION*/}
             <thead>
               <tr>
