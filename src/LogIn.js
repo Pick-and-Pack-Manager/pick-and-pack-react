@@ -1,38 +1,41 @@
 import React from "react";
-import "./App.css";
+import Button from 'react-bootstrap/Button';
+import Form from 'react-bootstrap/Form';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Card from 'react-bootstrap/Card'
 
 class Login extends React.Component {
-  state = {};
-  render() {
+  render()
+	{
     return (
-      <div className="container">
-        {/*CARD (need to fix the size)*/}
-        <div className="card">
-          <div className="card-header">LogIn</div>
-          <div className="card-body">
-            {/*FORM*/}
-            <form method="post" action="/orders">
-              <label className="form-label">Email</label>
-              <div className="input-group mb-3">
-                <input type="text" className="form-control" name="email" />
-              </div>
-              <label className="form-label">Password</label>
-              <div className="input-group mb-3">
-                <input type="text" className="form-control" name="password" />
-              </div>
-              {/*BUTTON will take you to Orders if Authentification OK*/}
-              <button className="btn btn-success">Log In</button>
-            </form>
-            <p className="small inline py-2">
-              No access? Please click the link to let us know{" "}
-              <a className="card-link" href="/loginerror">
-                Click
-              </a>
-            </p>
-          </div>
-        </div>
-      </div>
-    );
+			<Card style={{ width: '30rem' }}>
+				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
+						<Form>
+									<Form.Group className="mb-3" controlId="formBasicEmail">
+										<Form.Label>Email address</Form.Label>
+										<InputGroup className="mb-3">
+											<Form.Control
+												placeholder="Recipient's username"
+												aria-label="Recipient's username"
+												aria-describedby="basic-addon2"
+											/>
+											<InputGroup.Text id="basic-addon2">@pioneerwatertanks.com.au</InputGroup.Text>
+										</InputGroup>
+									</Form.Group>
+
+									<Form.Group className="mb-3" controlId="formBasicPassword">
+										<Form.Label>Password</Form.Label>
+										<Form.Control type="password" placeholder="Password" />
+										<Form.Text className="text-muted">
+											Your password is not encrypted
+										</Form.Text>
+									</Form.Group>
+									<Button variant="primary" type="submit">
+										Submit
+									</Button>
+								</Form>
+			</Card>
+		)
   }
 }
 
