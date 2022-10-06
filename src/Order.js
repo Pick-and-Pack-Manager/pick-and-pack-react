@@ -39,7 +39,7 @@ class Order extends React.Component {
           manifestId: 3,
         },
         {
-          lineNum: 1,
+          lineNum: 2,
           itemCode: 2,
           itemDescription: 3,
           qtyReq: 4,
@@ -57,6 +57,7 @@ class Order extends React.Component {
         },
       ],
     },
+    packageItems: [],
   };
 
   // AT THE MOUNT WE PUT THE ORDER (COMING FROM A PROP) INTO THE STATE.
@@ -66,6 +67,18 @@ class Order extends React.Component {
   //     orderOriginal: this.props.order,
   //   });
   // }
+
+  // FUNCTIONS TO MANAGE THE CREATION OF THE PACKET
+  onChange = (e) => {
+    this.setState({
+      packageItems: e.target.value,
+    });
+  };
+  onSubmitForm = (e) => {
+    e.preventDefault();
+    const packageItems = this.state.packateItems;
+    console.log(packageItems);
+  };
 
   render() {
     return (
@@ -92,8 +105,8 @@ class Order extends React.Component {
 
         <div className="container mt-5">
           <h1> Items to pack in the order </h1>
-          <form>
-            <Table striped bordered hover sm responsive="xl">
+          <form onSubmit={this.onSubmitForm}>
+            <Table striped bordered hover responsive="xl">
               {/*TABLE HEAD AND COLUMNS DEFINITION*/}
               <thead>
                 <tr>
@@ -119,9 +132,11 @@ class Order extends React.Component {
                 {this.state.order.orderItems.map((item, index) => (
                   <tr key={index}>
                     <td>
-                      <Form.Group className="mb-3">
-                        <Form.Check type="checkbox" />
-                      </Form.Group>
+                      <Form.Check
+                        type="checkbox"
+                        value={item.lineNum}
+                        onChange={this.onChange}
+                      />
                     </td>
                     <td>
                       <a href="/packing/order/{{this.state.order.docNum}}">
