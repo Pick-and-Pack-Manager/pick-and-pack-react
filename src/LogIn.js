@@ -9,7 +9,8 @@ let emailService = '@pioneerwatertanks.com.au'
 class Login extends React.Component {
 	state = {
 		loginEmail: '',
-		loginPassword: ''
+		loginPassword: '',
+		emailService: '@pioneerwatertanks.com.au'
 	}
   render()
 	{
@@ -32,7 +33,7 @@ class Login extends React.Component {
 												value={this.state.loginEmail}
 												onChange={(e) => { this.setState({loginEmail: e.target.value})}}
 											/>
-											<InputGroup.Text id="basic-addon2">@pioneerwatertanks.com.au</InputGroup.Text>
+											<InputGroup.Text id="basic-addon2">{this.state.emailService}</InputGroup.Text>
 										</InputGroup>
 									</Form.Group>
 
