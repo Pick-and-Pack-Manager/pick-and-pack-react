@@ -2,7 +2,7 @@ import React from "react";
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
-// import Card from 'react-bootstrap/Card'
+import Card from 'react-bootstrap/Card'
 
 class Login extends React.Component {
 	state = {
@@ -13,6 +13,8 @@ class Login extends React.Component {
   render()
 	{
     return (
+			<Card style={{ width: '35rem' }} ClassName="m-3">
+				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
 						<Form onSubmit={(e) => {
 							let user = {
 								email: `${this.state.loginEmail}${this.state.emailService}`,
@@ -51,6 +53,7 @@ class Login extends React.Component {
 										Login
 									</Button>
 								</Form>
+							</Card>
 		)
   }
 }
