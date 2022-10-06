@@ -10,6 +10,7 @@ import Orders from "./Orders";
 import Shipment from "./Shipment";
 import Nav from "./NavComponent";
 import Profile from "./Profile";
+import Test from "./Test";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
@@ -34,6 +35,7 @@ class App extends React.Component {
           <Route path="/Orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
+          <Route exact path="/test" component={Test} />
         </Switch>
       </BrowserRouter>
     );

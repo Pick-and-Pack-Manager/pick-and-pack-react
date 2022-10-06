@@ -69,16 +69,8 @@ class Order extends React.Component {
   // }
 
   // FUNCTIONS TO MANAGE THE CREATION OF THE PACKET
-  onChange = (e) => {
-    this.setState({
-      packageItems: e.target.value,
-    });
-  };
-  onSubmitForm = (e) => {
-    e.preventDefault();
-    const packageItems = this.state.packateItems;
-    console.log(packageItems);
-  };
+
+  onSubmitForm = (e) => {};
 
   render() {
     return (
