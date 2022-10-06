@@ -4,21 +4,23 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 // import Card from 'react-bootstrap/Card'
 
-let emailService = '@pioneerwatertanks.com.au'
-
 class Login extends React.Component {
 	state = {
 		loginEmail: '',
 		loginPassword: '',
-		emailService: '@pioneerwatertanks.com.au'
+		emailService: '@test.com'
 	}
   render()
 	{
     return (
 						<Form onSubmit={(e) => {
+							let user = {
+								email: `${this.state.loginEmail}${this.state.emailService}`,
+								password: this.state.loginPassword
+							}
+							console.log(user)
 							e.preventDefault();
-							this.props.searchUser(
-								console.log(this.state)
+							this.props.searchUser(user
 							, e)
 						}
 						}>
