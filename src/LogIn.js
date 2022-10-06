@@ -4,6 +4,7 @@ import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Card from 'react-bootstrap/Card'
 import Alert from 'react-bootstrap/Alert'
+import { Redirect } from "react-router-dom";
 
 class Login extends React.Component {
 	state = {
@@ -18,8 +19,8 @@ class Login extends React.Component {
 	{
     return (
 			<Card style={{ width: '35rem' }} ClassName="m-3">
-				{this.props.error ? <Alert key='danger' variant='danger'>{this.props.error}</Alert> : <div></div>}
 				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
+				{this.props.error ? <Alert key='danger' variant='danger'>{this.props.error}</Alert> : <div></div>}
 						<Form onSubmit={(e) => {
 							let user = {
 								email: `${this.state.loginEmail}${this.state.emailService}`,
