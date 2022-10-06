@@ -3,24 +3,28 @@ import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Card from 'react-bootstrap/Card'
+import Alert from 'react-bootstrap/Alert'
 
 class Login extends React.Component {
 	state = {
 		loginEmail: '',
 		loginPassword: '',
-		emailService: '@test.com'
+		emailService: '@test.com',
 	}
+	// showerror = {
+	// 	if ()
+	// }
   render()
 	{
     return (
 			<Card style={{ width: '35rem' }} ClassName="m-3">
-				<Card.Header as="h5">{this.props.error}</Card.Header>
+				{this.props.error ? <Alert key='danger' variant='danger'>{this.props.error}</Alert> : <div></div>}
+				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
 						<Form onSubmit={(e) => {
 							let user = {
 								email: `${this.state.loginEmail}${this.state.emailService}`,
 								password: this.state.loginPassword
 							}
-							console.log(user)
 							e.preventDefault();
 							this.props.searchUser(user
 							, e)
