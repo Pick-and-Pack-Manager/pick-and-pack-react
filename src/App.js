@@ -15,7 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 class App extends React.Component {
   state = {
     orders: [],
-		user: {}
+		user: {},
   };
 	// {/*This retrieves all the orders from the backend, we will filter here maybe, if there are not to much. Maybe we can call only OPEN orders from backend/DB*/}
   readOrders = async () => {
@@ -25,8 +25,11 @@ class App extends React.Component {
     });
   }
 	searchUser = async (user, e) => {
-			let searched = await axios.post(`http://localhost:4420/login`, {user})
-
+			let searched = await axios.post(`http://localhost:4420/login`, {user}, {withCredentials: true})
+				console.log(searched.data)
+				this.setState({
+					user: searched.data.user,
+					error: searched.data.error})
   }
 
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
@@ -34,7 +37,7 @@ class App extends React.Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" render={() => <Login searchUser={this.searchUser} example="hello" />} />
+          <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error}/>} />
           <Route path="/profile" component={Profile} />
           <Route path="/Orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />

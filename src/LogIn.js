@@ -14,7 +14,7 @@ class Login extends React.Component {
 	{
     return (
 			<Card style={{ width: '35rem' }} ClassName="m-3">
-				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
+				<Card.Header as="h5">{this.props.error}</Card.Header>
 						<Form onSubmit={(e) => {
 							let user = {
 								email: `${this.state.loginEmail}${this.state.emailService}`,
