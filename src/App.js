@@ -25,7 +25,7 @@ class App extends React.Component {
     });
   }
 	searchUser = async (user, e) => {
-			// let searched = await axios.post(`http://localhost:4420/auth/login`, {user})
+			let searched = await axios.post(`http://localhost:4420/login`, {user})
 
   }
 
