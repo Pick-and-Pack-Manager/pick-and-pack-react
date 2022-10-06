@@ -23,13 +23,17 @@ class App extends React.Component {
       orders: orders,
     });
   };
+	searchUser = async (user, e) => {
+			// let searched = await axios.post(`http://localhost:4420/auth/login`, {user})
+
+  }
 
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
   render() {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" component={Login} />
+          <Route exact path="/" render={() => <Login searchUser={this.searchUser} example="hello" />} />
           <Route path="/profile" component={Profile} />
           <Route path="/Orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />
