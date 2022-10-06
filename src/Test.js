@@ -25,8 +25,9 @@ class Test extends React.Component {
     ],
     inpacking: [],
     packed: [],
+    packageCounter: 1,
   };
-  // METHODS
+  // METHOD TO MOVE ITEMS FROM ITEMS STATE TO INPACKING STATE
   addRemovefromPack = (item) => {
     let items = this.state.items;
     let inpacking = this.state.inpacking;
@@ -42,14 +43,30 @@ class Test extends React.Component {
         return el.itemId !== item.itemId;
       });
     }
-    console.log(items);
-    console.log(inpacking);
+
     this.setState({
       items,
       inpacking,
     });
   };
+  // METHOD TO ASIGN A PACKAGE NUMBER TO THE ITEMS AND SEND THEM TO PACKAGED STATE
+  closePackage = () => {
+    let packets = this.state.packed;
+    let pack = this.state.inpacking;
+    packets.push(pack);
+    this.setState({
+      packed: packets,
+    });
 
+    console.log(pack);
+
+    console.log("prueba package");
+  };
+
+  // METHOD TO CLOSE DE ORDER BY MOVING REPLACING THE ITEMS STATE THE PACKAGES AND LOOSE ITEMS THAT WILL HAVE PACKAGE 0 (NO PACKAGE)
+  closeOrder = () => {
+    console.log("prueba order");
+  };
   // RENDER THE HTML
   render() {
     return (
@@ -83,9 +100,37 @@ class Test extends React.Component {
           </table>
         </form>
         {/* SEND TO PACKAGE BUTTON */}
-        <button onClick={(e) => closePackage(e)}> Send to Package </button>
+        <button onClick={(e) => this.closePackage(e)}> Send to Package </button>
+        {/* INPACKING TABLE */}
+        <h3> Inpacking list </h3>
+        <form>
+          <table>
+            <thead>
+              <tr>
+                <td>Add Package</td>
+                <td>Id Item</td>
+                <td>Qty Item</td>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.inpacking.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      value={item.itemId}
+                      onChange={(e) => this.addRemovefromPack(item)}
+                    />
+                  </td>
+                  <td>{item.itemId}</td>
+                  <td>{item.itemQty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </form>
         {/* PACKAGE TABLE */}
-        <h3> Packet list </h3>
+        <h3> Package list </h3>
         <form>
           <table>
             <thead>
@@ -113,7 +158,7 @@ class Test extends React.Component {
           </table>
         </form>
         {/* CLOSE THE ORDER PACKING AND BACK TO ORDERS LIST */}
-        <button onClick={(e) => closePackage(e)}> Send to Package </button>
+        <button onClick={(e) => this.closeOrder(e)}> Close the </button>
       </>
     );
   }
