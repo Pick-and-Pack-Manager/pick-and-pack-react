@@ -30,7 +30,7 @@ class Login extends React.Component {
 												aria-describedby="basic-addon2"
 												name='loginEmail'
 												value={this.state.loginEmail}
-												onChange={(e) => { this.setState({ loginEmail: e.target.value })}}
+												onChange={(e) => { this.setState({loginEmail: e.target.value})}}
 											/>
 											<InputGroup.Text id="basic-addon2">@pioneerwatertanks.com.au</InputGroup.Text>
 										</InputGroup>

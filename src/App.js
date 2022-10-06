@@ -2,9 +2,9 @@
 import axios from "axios";
 import "./App.css";
 import React from "react";
-import ReactDOM from "react-dom";
+// import ReactDOM from "react-dom";
 import { BrowserRouter, Switch, Route } from "react-router-dom";
-import Login from "./Login";
+import Login from "./login";
 import Order from "./Order";
 import Orders from "./Orders";
 import Shipment from "./Shipment";
@@ -15,6 +15,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 class App extends React.Component {
   state = {
     orders: [],
+		user: {}
   };
 	// {/*This retrieves all the orders from the backend, we will filter here maybe, if there are not to much. Maybe we can call only OPEN orders from backend/DB*/}
   readOrders = async () => {
@@ -22,7 +23,7 @@ class App extends React.Component {
     this.setState({
       orders: orders,
     });
-  };
+  }
 	searchUser = async (user, e) => {
 			// let searched = await axios.post(`http://localhost:4420/auth/login`, {user})
 
