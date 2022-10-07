@@ -2,7 +2,6 @@ import React from "react";
 import "./App.css";
 import Nav from "./NavComponent.js";
 import Table from "react-bootstrap/Table";
-import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 import {BrowserRouter, Switch, Route, Redirect, Link} from "react-router-dom";
 
 class Orders extends React.Component {
@@ -59,6 +58,7 @@ class Orders extends React.Component {
         Lines: [1, 2, 3],
       },
     ],
+		loggedIn: this.props.loggedIn
   };
   // AT THE MOUNT WE CREATE ORDERS AND ORIGINAL ORDERS IN THE STATE
   // {/*componentWillMount() {
@@ -99,10 +99,8 @@ class Orders extends React.Component {
   };
 
   render() {
-		console.log(this.state.user)
     return (
-			// req.user.isAuthenticated() ?
-			true ?
+			sessionStorage.loggedIn = true && sessionStorage.loggedIn != undefined ?
       <>
         {/*NAVIGATION SECTION*/}
         <Nav />
@@ -235,7 +233,7 @@ class Orders extends React.Component {
         </div>
       </>
 			:
-			<Redirect to="/" />
+			<Redirect to="" />
     );
   }
 }

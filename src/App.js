@@ -41,16 +41,18 @@ class App extends React.Component {
 						error: searched.data.error,
 						loggedIn: searched.data.loggedIn
 				})
+				sessionStorage.setItem("storedAccess", searched.data.user.permission)
+				sessionStorage.setItem("loggedIn", searched.data.loggedIn)
+
   }
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
   render() {
-		console.log(this.state.loggedIn)
     return (
       <Router>
         <Switch>
           <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error} loggedIn={this.state.loggedIn} emailService={this.state.emailService}/>} />
           <Route path="/profile" component={Profile} />
-          <Route path="/orders" component={Orders} />
+          <Route path="/orders" component={Orders} loggedIn={this.state.loggedIn}/>
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
         </Switch>

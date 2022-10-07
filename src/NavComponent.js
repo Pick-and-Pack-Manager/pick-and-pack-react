@@ -7,7 +7,7 @@ class Nav extends React.Component {
   state = {}
 	logOut = async (e) => {
 		let logout = await axios.get(`http://localhost:4420/logout`, {withCredentials: true})
-			console.log(logout)
+			sessionStorage.clear()
 	}
   render() {
     return (
