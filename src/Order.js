@@ -1,222 +1,182 @@
 import React from "react";
-import "./App.css";
-import Nav from "./NavComponent.js";
-import Table from "react-bootstrap/Table";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
-import Button from "react-bootstrap/Button";
-import Form from "react-bootstrap/Form";
 
-class Order extends React.Component {
+class Test extends React.Component {
+  // STATE OF THE COMPONENT. WE JUST LOAD WITH A METHOD THE ITEMS IN THE STATE (INFO COMING FROM STATE.PROPS.ORDER ) ALL OTHER ORDER INFO STILL IN PROPS.
   state = {
-    order: {
-      docNum: 1,
-      docDueDate: "docDueDate",
-      kittingDate: "kittingDate",
-      completingDate: "completingDate",
-      Customer: {
-        CardName: "Company 1",
+    availableItems: [
+      //all the Items not added to a package. Will be sent like potential free items to manifest.
+      {
+        itemId: 111,
+        itemQty: 10,
       },
-      orderComments: "Comment of the Order",
-      orderCategory: "Category of Order	",
-      orderItems: [
-        {
-          lineNum: 1,
-          itemCode: 2,
-          itemDescription: 3,
-          qtyReq: 4,
-          invWhse: 5,
-          delWhse: 6,
-          issued: 5,
-          issuedQty: 4,
-          issuedBalance: 4,
-          freeText: 4,
-          shippingType: 4,
-          shippingProvider: 4,
-          shippingDestination: 4,
-          packageId: 4,
-          manifestId: 3,
-        },
-        {
-          lineNum: 2,
-          itemCode: 2,
-          itemDescription: 3,
-          qtyReq: 4,
-          invWhse: 5,
-          delWhse: 6,
-          issued: 5,
-          issuedQty: 4,
-          issuedBalance: 4,
-          freeText: 4,
-          shippingType: 4,
-          shippingProvider: 4,
-          shippingDestination: 4,
-          packageId: 4,
-          manifestId: 3,
-        },
-      ],
-    },
-    packageItems: [],
+      {
+        itemId: 222,
+        itemQty: 20,
+      },
+    ],
+    items: [
+      // Functional state to help in the process of picking and unclicking items. Not show in render
+      {
+        itemId: 111,
+        itemQty: 10,
+      },
+      {
+        itemId: 222,
+        itemQty: 20,
+      },
+    ],
+    inpacking: [], // Array: State that contains the items to be added to the packages
+    packages: [], // Array: State that contains the packages already created
+    packageCounter: 1, // Counter of packages created - Package id: OrderId-PackageCounter
+  };
+  // METHOD TO MOVE ITEMS FROM ITEMS STATE TO INPACKING STATE
+  addRemovefromPack = (item) => {
+    let items = this.state.items;
+    let inpacking = this.state.inpacking;
+    // We check if the items havent been packed, we move them to packing and take them out of Items
+    if (this.state.items.find((el) => el.itemId === item.itemId)) {
+      inpacking.push(item);
+      items = items.filter((el) => {
+        return el.itemId !== item.itemId;
+      });
+    } else {
+      // It items are packed, we take them out of packing and move them to items again.
+      items.push(item);
+      inpacking = inpacking.filter((el) => {
+        return el.itemId !== item.itemId;
+      });
+    }
+    // We need items state to do this condition. The Item list showed needs to show all the packages not asigned a package even though they are in packing.
+    this.setState({
+      items: items,
+      inpacking: inpacking,
+    });
+  };
+  // METHOD TO ASIGN A PACKAGE NUMBER TO THE ITEMS AND SEND THEM TO PACKAGED STATE
+  closePackage = (e) => {
+    if (this.state.inpacking.length !== 0) {
+      let packages = this.state.packages; // array of packages already finished (empty at the begging)
+      let packageItems = this.state.inpacking; // items to be added to this new package (checked items bassically)
+      let pack = {
+        packageId: "docNum-`${this.state.packageCounter`",
+        docNum: "order number", // should be this.props.order.DocNum
+        userId: "userId", // COMES FROM THE AUTHORIZATION IN BACKEND?
+        items: packageItems,
+      };
+      packages.push(pack); // We push the new pack into the packages array
+
+      let availableItems = this.state.availableItems.filter(
+        (x) => !this.state.inpacking.filter((y) => y.itemId === x.itemId).length
+      );
+      console.log(availableItems);
+      this.setState({
+        packages,
+        inpacking: [],
+        availableItems,
+      });
+    }
   };
 
-  // AT THE MOUNT WE PUT THE ORDER (COMING FROM A PROP) INTO THE STATE.
-  // componentWillMount() {
-  //   this.setState({
-  //     order: this.props.order,
-  //     orderOriginal: this.props.order,
-  //   });
-  // }
-
-  // FUNCTIONS TO MANAGE THE CREATION OF THE PACKET
-
-  onSubmitForm = (e) => {};
-
+  // METHOD TO CLOSE DE ORDER BY MOVING REPLACING THE ITEMS STATE THE PACKAGES AND LOOSE ITEMS THAT WILL HAVE PACKAGE 0 (NO PACKAGE)
+  closeOrder = () => {
+    console.log("prueba order");
+  };
+  // RENDER THE HTML
   render() {
     return (
       <>
-        <Nav />
-        {/*ORDER DATE*/}
-        <Container className="text-center">
-          <Row>
-            <Col>Consumer Order {this.state.order.docNum}</Col>
-          </Row>
-          <Row>
-            <Col>Customer: {this.state.order.Customer.CardName}</Col>
-            <Col>Kitting Date: {this.state.order.kittingDate}</Col>
-          </Row>
-          <Row>
-            <Col>Order Comment: {this.state.order.orderComments}</Col>
-            <Col>Due Date: {this.state.order.docDueDate}</Col>
-          </Row>
-          <Row>
-            <Col>Order Category: {this.state.order.orderCategory}</Col>
-            <Col>Competing Date: {this.state.order.completingDate}</Col>
-          </Row>
-        </Container>
-
-        <div className="container mt-5">
-          <h1> Items to pack in the order </h1>
-          <form onSubmit={this.onSubmitForm}>
-            <Table striped bordered hover responsive="xl">
-              {/*TABLE HEAD AND COLUMNS DEFINITION*/}
-              <thead>
-                <tr>
-                  <th>Add to Package</th>
-                  <th>lineNum</th>
-                  <th>itemCode</th>
-                  <th>itemDescription</th>
-                  <th>qtyReq</th>
-                  <th>invWhse</th>
-                  <th>delWhse</th>
-                  <th>issued</th>
-                  <th>issuedQty</th>
-                  <th>issuedBalance</th>
-                  <th>freeText</th>
-                  <th>shippingType</th>
-                  <th>shippingProvider</th>
-                  <th>shippingDestination</th>
-                  <th>packageId</th>
-                  <th>manifestId</th>
+        {/* ITEM LIST */}
+        <h3> Item list </h3>
+        <form>
+          <table>
+            <thead>
+              <tr>
+                <td>Add Package</td>
+                <td>Id Item</td>
+                <td>Qty Item</td>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.availableItems.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      value={item.itemId}
+                      onChange={(e) => this.addRemovefromPack(item)}
+                    />
+                  </td>
+                  <td>{item.itemId}</td>
+                  <td>{item.itemQty}</td>
                 </tr>
-              </thead>
-              <tbody>
-                {this.state.order.orderItems.map((item, index) => (
-                  <tr key={index}>
-                    <td>
-                      <Form.Check
-                        type="checkbox"
-                        value={item.lineNum}
-                        onChange={this.onChange}
-                      />
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.state.order.docNum}}">
-                        {item.lineNum}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.itemCode}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.itemDescription}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.qtyReq}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.invWhse}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.delWhse}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.issued}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.issuedQty}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.issuedBalance}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.freeText}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.shippingType}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.shippingProvider}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.shippingDestination}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.packageId}
-                      </a>
-                    </td>
-                    <td>
-                      <a href="/packing/order/{{this.props.order.id}}">
-                        {item.manifestId}
-                      </a>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
-            <Button variant="primary" type="submit">
-              Add to Package
-            </Button>
-          </form>
-        </div>
+              ))}
+            </tbody>
+          </table>
+        </form>
+        {/* SEND TO PACKAGE BUTTON */}
+        <button onClick={(e) => this.closePackage(e)}> Send to Package </button>
+        {/* INPACKING TABLE */}
+        <h3> Inpacking list </h3>
+        <form>
+          <table>
+            <thead>
+              <tr>
+                <td>Add Package</td>
+                <td>Id Item</td>
+                <td>Qty Item</td>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.inpacking.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      value={item.itemId}
+                      onChange={(e) => this.addRemovefromPack(item)}
+                    />
+                  </td>
+                  <td>{item.itemId}</td>
+                  <td>{item.itemQty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </form>
+        {/* PACKAGE TABLE */}
+        <h3> Package list </h3>
+        <form>
+          <table>
+            <thead>
+              <tr>
+                <td>Add Package</td>
+                <td>Id Item</td>
+                <td>Qty Item</td>
+              </tr>
+            </thead>
+            <tbody>
+              {this.state.packages.map((item, index) => (
+                <tr key={index}>
+                  <td>
+                    <input
+                      type="checkbox"
+                      value={item.itemId}
+                      onChange={(e) => this.addRemovefromPack(item)}
+                    />
+                  </td>
+                  <td>{item.itemId}</td>
+                  <td>{item.itemQty}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </form>
+        {/* CLOSE THE ORDER PACKING AND BACK TO ORDERS LIST */}
+        <button onClick={(e) => this.closeOrder(e)}> Close the </button>
       </>
     );
   }
-}
 
-export default Order;
+  // END OF RENDER
+}
+export default Test;
