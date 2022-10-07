@@ -3,7 +3,13 @@ import axios from "axios";
 import "./App.css";
 import React from "react";
 // import ReactDOM from "react-dom";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  Redirect
+} from "react-router-dom";
 import Login from "./login";
 import Order from "./Order";
 import Orders from "./Orders";
@@ -35,11 +41,11 @@ class App extends React.Component {
 						loggedIn: searched.data.loggedIn
 				})
   }
-
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
   render() {
+		console.log(this.state.loggedIn)
     return (
-      <BrowserRouter>
+      <Router>
         <Switch>
           <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error} loggedIn={this.state.loggedIn} />} />
           <Route path="/profile" component={Profile} />
@@ -47,7 +53,7 @@ class App extends React.Component {
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
         </Switch>
-      </BrowserRouter>
+      </Router>
     );
   }
 }
