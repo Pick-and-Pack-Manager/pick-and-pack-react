@@ -16,7 +16,7 @@ class Login extends React.Component {
   render()
 	{
     return (
-			this.props.loggedIn == true ? <Redirect to="/Orders" /> :
+			this.props.loggedIn == true ? <Redirect to="/orders" /> :
 			<Card style={{ width: '35rem' }} ClassName="m-3">
 				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
 				{this.props.error ? <Alert key='danger' variant='danger'>{this.props.error}</Alert> : <div></div>}
