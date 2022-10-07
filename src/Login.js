@@ -10,7 +10,6 @@ class Login extends React.Component {
 	state = {
 		loginEmail: '',
 		loginPassword: '',
-		emailService: '@test.com',
 	}
 
   render()
@@ -22,7 +21,7 @@ class Login extends React.Component {
 				{this.props.error ? <Alert key='danger' variant='danger'>{this.props.error}</Alert> : <div></div>}
 						<Form onSubmit={(e) => {
 							let user = {
-								email: `${this.state.loginEmail}${this.state.emailService}`,
+								email: `${this.state.loginEmail}${this.props.emailService}`,
 								password: this.state.loginPassword
 							}
 							e.preventDefault();
@@ -41,7 +40,7 @@ class Login extends React.Component {
 												value={this.state.loginEmail}
 												onChange={(e) => { this.setState({loginEmail: e.target.value})}}
 											/>
-											<InputGroup.Text id="basic-addon2">{this.state.emailService}</InputGroup.Text>
+											<InputGroup.Text id="basic-addon2">{this.props.emailService}</InputGroup.Text>
 										</InputGroup>
 									</Form.Group>
 

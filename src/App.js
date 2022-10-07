@@ -22,7 +22,8 @@ class App extends React.Component {
   state = {
     orders: [],
 		user: {},
-		loggedIn: false
+		loggedIn: false,
+		emailService: '@test.com'
   };
 	// {/*This retrieves all the orders from the backend, we will filter here maybe, if there are not to much. Maybe we can call only OPEN orders from backend/DB*/}
   readOrders = async () => {
@@ -47,7 +48,7 @@ class App extends React.Component {
     return (
       <Router>
         <Switch>
-          <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error} loggedIn={this.state.loggedIn} />} />
+          <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error} loggedIn={this.state.loggedIn} emailService={this.state.emailService}/>} />
           <Route path="/profile" component={Profile} />
           <Route path="/orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />
