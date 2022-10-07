@@ -1,8 +1,14 @@
 import React from "react";
 import "./App.css";
+import axios from "axios";
+import Button from 'react-bootstrap/Button';
 
 class Nav extends React.Component {
-  state = {};
+  state = {}
+	logOut = async (e) => {
+		let logout = await axios.get(`http://localhost:4420/logout`, {withCredentials: true})
+			console.log(logout)
+	}
   render() {
     return (
       <nav className="logIn">
@@ -20,7 +26,11 @@ class Nav extends React.Component {
             <div className="col" align="right">
               <a className="btn btn-outline-secondary">PROFILE</a>
 
-              <a className="btn btn-outline-secondary">LOG OUT</a>
+              <Button variant="primary" type="submit" onClick={(e) => {
+								// e.preventDefault();
+								this.logOut()
+							}
+							}>LOG OUT</Button>
             </div>
           </div>
         </div>
