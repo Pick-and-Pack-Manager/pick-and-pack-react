@@ -11,11 +11,11 @@ import {
   Redirect
 } from "react-router-dom";
 import Login from "./login";
-import Order from "./Order";
-import Orders from "./Orders";
-import Shipment from "./Shipment";
-import Nav from "./NavComponent";
-import Profile from "./Profile";
+import Order from "./order";
+import Orders from "./orders";
+import Shipment from "./shipment";
+import Nav from "./navComponent";
+import Profile from "./profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
@@ -49,7 +49,7 @@ class App extends React.Component {
         <Switch>
           <Route exact path="/" render={() => <Login searchUser={this.searchUser} error={this.state.error} loggedIn={this.state.loggedIn} />} />
           <Route path="/profile" component={Profile} />
-          <Route path="/Orders" component={Orders} />
+          <Route path="/orders" component={Orders} />
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
         </Switch>
