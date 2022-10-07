@@ -3,6 +3,7 @@ import "./App.css";
 import Nav from "./NavComponent.js";
 import Table from "react-bootstrap/Table";
 import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
+import {BrowserRouter, Switch, Route, Redirect, Link} from "react-router-dom";
 
 class Orders extends React.Component {
   state = {
@@ -184,50 +185,48 @@ class Orders extends React.Component {
               {this.state.orders.map((order, index) => (
                 <tr key={index}>
                   <td>
-                    <a href="/packing/order/{{this.state.order.docNum}}`">
-                      {order.docNum}
-                    </a>
+										<Link to="/packing/order/{{this.state.order.docNum}}`">{order.docNum}</Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.docDueDate}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.kittingDate}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.completingDate}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.Customer.CardName}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.orderComments}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.orderCategory}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {order.Lines.length}
-                    </a>
+                    </Link>
                   </td>
                   <td>
-                    <a href="/packing/order/{{this.props.order.id}}">
+                    <Link to="/packing/order/{{this.props.order.id}}">
                       {" "}
                       {order.Lines.length * 0.75}
-                    </a>
+                    </Link>
                   </td>
                 </tr>
               ))}
