@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import Nav from "./NavComponent.js";
 import Table from "react-bootstrap/Table";
+import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 
 class Orders extends React.Component {
   state = {
@@ -97,7 +98,10 @@ class Orders extends React.Component {
   };
 
   render() {
+		console.log(this.state.user)
     return (
+			// req.user.isAuthenticated() ?
+			true ?
       <>
         {/*NAVIGATION SECTION*/}
         <Nav />
@@ -231,6 +235,8 @@ class Orders extends React.Component {
           </Table>
         </div>
       </>
+			:
+			<Redirect to="/" />
     );
   }
 }
