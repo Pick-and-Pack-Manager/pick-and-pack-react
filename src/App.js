@@ -10,12 +10,12 @@ import {
   Link,
   Redirect
 } from "react-router-dom";
-import Login from "./login";
-import Order from "./order";
-import Orders from "./orders";
-import Shipment from "./shipment";
-import Nav from "./navComponent";
-import Profile from "./profile";
+import Login from "./Login";
+import Order from "./Order";
+import Orders from "./Orders";
+import Shipment from "./Shipment";
+import Nav from "./NavComponent";
+import Profile from "./Profile";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
