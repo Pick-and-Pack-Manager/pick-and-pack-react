@@ -14,8 +14,8 @@ class Profile extends React.Component {
   render() {
     return (
 			sessionStorage.storedAccess > 'A' ?
-			<Card style={{ width: '45rem' }} ClassName="m-3">
 				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
+			<Card style={{ width: '45rem' }} className="m-3">
 						<Form>
 						<InputGroup className="mb-3" >
 							<InputGroup.Text>First and last name</InputGroup.Text>
