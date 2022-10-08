@@ -25,7 +25,7 @@ class Nav extends React.Component {
 
             {/*- COL 2 NAV - PROFILE AND LOG IN -->*/}
             <div className="col" align="right">
-              <a className="btn btn-outline-secondary">PROFILE</a>
+              <a className="btn btn-outline-secondary">{sessionStorage.userFullName}</a>
 
               <Button variant="primary" type="submit" onClick={(e) => {
 								// e.preventDefault();
