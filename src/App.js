@@ -42,8 +42,8 @@ class App extends React.Component {
 						error: searched.data.error,
 						loggedIn: searched.data.loggedIn
 				})
-				console.log(searched.data.loggedIn)
 				sessionStorage.setItem("storedAccess", searched.data.user.permission)
+				sessionStorage.setItem("userFullName", searched.data.user.fullName)
 
   }
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
