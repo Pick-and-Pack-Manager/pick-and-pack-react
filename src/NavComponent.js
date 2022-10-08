@@ -2,6 +2,7 @@ import React from "react";
 import "./App.css";
 import axios from "axios";
 import Button from 'react-bootstrap/Button';
+import {BrowserRouter, Switch, Route, Redirect} from "react-router-dom";
 
 class Nav extends React.Component {
   state = {}
@@ -9,6 +10,7 @@ class Nav extends React.Component {
 		let logout = await axios.get(`http://localhost:4420/logout`, {withCredentials: true})
 			sessionStorage.clear()
 			localStorage.clear()
+			window.location.href = '/';
 	}
   render() {
     return (
