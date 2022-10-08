@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import Nav from "./NavComponent.js";
-
+import {BrowserRouter, Switch, Route, Redirect, Link} from "react-router-dom";
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
@@ -13,6 +13,7 @@ class Profile extends React.Component {
   state = {};
   render() {
     return (
+			sessionStorage.storedAccess > 'A' ?
 			<Card style={{ width: '45rem' }} ClassName="m-3">
 				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
 						<Form>
@@ -92,6 +93,8 @@ class Profile extends React.Component {
 				</Form.Group>
 			</Form>
 			</Card>
+			:
+			<Redirect to="/" />
 		);
   }
 }
