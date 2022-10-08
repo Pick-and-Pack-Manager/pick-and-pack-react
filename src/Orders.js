@@ -99,8 +99,9 @@ class Orders extends React.Component {
   };
 
   render() {
+		console.log(sessionStorage)
     return (
-			sessionStorage.loggedIn = true && sessionStorage.loggedIn != undefined ?
+			sessionStorage.storedAccess > 'A' ?
       <>
         {/*NAVIGATION SECTION*/}
         <Nav />
@@ -233,7 +234,7 @@ class Orders extends React.Component {
         </div>
       </>
 			:
-			<Redirect to="" />
+			<Redirect to="/" />
     );
   }
 }

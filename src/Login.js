@@ -14,6 +14,7 @@ class Login extends React.Component {
 
   render()
 	{
+		console.log(sessionStorage)
     return (
 			this.props.loggedIn == true ? <Redirect to="/orders" /> :
 			<Card style={{ width: '35rem' }} ClassName="m-3">
