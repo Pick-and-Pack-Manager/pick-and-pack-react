@@ -8,14 +8,19 @@ import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card'
 import InputGroup from 'react-bootstrap/InputGroup';
+import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
   state = {};
   render() {
     return (
-			sessionStorage.storedAccess > 'A' ?
-				<Card.Header as="h5">Login to Pick and Pack Manager</Card.Header>
+			sessionStorage.storedAccess >= 'C' ?
+			<>
+			{/*NAVIGATION SECTION*/}
+			<Nav />
+			{/*FILTERS SECTION - ITS MISSING THE ICONS*/}
 			<Card style={{ width: '45rem' }} className="m-3">
+				<Card.Header as="h5">Create Profile</Card.Header>
 						<Form>
 						<InputGroup className="mb-3" >
 							<InputGroup.Text>First and last name</InputGroup.Text>
@@ -93,6 +98,7 @@ class Profile extends React.Component {
 				</Form.Group>
 			</Form>
 			</Card>
+			</>
 			:
 			<Redirect to="/" />
 		);
