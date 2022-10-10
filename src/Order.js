@@ -1,6 +1,6 @@
 import React from "react";
 
-class Test extends React.Component {
+class Order extends React.Component {
   // STATE OF THE COMPONENT. WE JUST LOAD WITH A METHOD THE ITEMS IN THE STATE (INFO COMING FROM STATE.PROPS.ORDER ) ALL OTHER ORDER INFO STILL IN PROPS.
   state = {
     availableItems: [
@@ -191,4 +191,4 @@ class Test extends React.Component {
 
   // END OF RENDER
 }
-export default Test;
+export default Order;
