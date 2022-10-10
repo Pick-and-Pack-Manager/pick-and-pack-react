@@ -43,7 +43,6 @@ class Test extends React.Component {
         return el.itemId !== item.itemId;
       });
     }
-
     this.setState({
       items,
       inpacking,

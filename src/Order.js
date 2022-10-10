@@ -27,7 +27,7 @@ class Test extends React.Component {
     ],
     inpacking: [], // Array: State that contains the items to be added to the packages
     packages: [], // Array: State that contains the packages already created
-    packageCounter: 1, // Counter of packages created - Package id: OrderId-PackageCounter
+    count: 1, // Counter of packages created - Package id: OrderId-PackageCounter
   };
   // METHOD TO MOVE ITEMS FROM ITEMS STATE TO INPACKING STATE
   addRemovefromPack = (item) => {
@@ -57,8 +57,9 @@ class Test extends React.Component {
     if (this.state.inpacking.length !== 0) {
       let packages = this.state.packages; // array of packages already finished (empty at the begging)
       let packageItems = this.state.inpacking; // items to be added to this new package (checked items bassically)
+      console.log(packageItems);
       let pack = {
-        packageId: "docNum-`${this.state.packageCounter`",
+        packageId: this.state.count,
         docNum: "order number", // should be this.props.order.DocNum
         userId: "userId", // COMES FROM THE AUTHORIZATION IN BACKEND?
         items: packageItems,
@@ -68,19 +69,23 @@ class Test extends React.Component {
       let availableItems = this.state.availableItems.filter(
         (x) => !this.state.inpacking.filter((y) => y.itemId === x.itemId).length
       );
-      console.log(availableItems);
+      // this next part removes the cheked status from all the lists
+      var clist = document.getElementsByTagName("input");
+      for (var i = 0; i < clist.length; ++i) {
+        clist[i].checked = false;
+      }
+      // st the states to new values in order for the packages to be created
       this.setState({
         packages,
         inpacking: [],
         availableItems,
       });
+      this.setState({ count: this.state.count + 1 });
     }
   };
 
   // METHOD TO CLOSE DE ORDER BY MOVING REPLACING THE ITEMS STATE THE PACKAGES AND LOOSE ITEMS THAT WILL HAVE PACKAGE 0 (NO PACKAGE)
-  closeOrder = () => {
-    console.log("prueba order");
-  };
+  closeOrder = () => {};
   // RENDER THE HTML
   render() {
     return (
@@ -149,23 +154,30 @@ class Test extends React.Component {
           <table>
             <thead>
               <tr>
-                <td>Add Package</td>
-                <td>Id Item</td>
-                <td>Qty Item</td>
+                <td>Pack Id</td>
+                <td>docNum</td>
+                <td>
+                  <tr>Item Array</tr>
+                  <tr>
+                    <td>Id</td>
+                    <td>Qty</td>
+                  </tr>
+                </td>
               </tr>
             </thead>
             <tbody>
-              {this.state.packages.map((item, index) => (
+              {this.state.packages.map((pack, index) => (
                 <tr key={index}>
+                  <td>{pack.packageId}</td>
+                  <td>{pack.docNum}</td>
                   <td>
-                    <input
-                      type="checkbox"
-                      value={item.itemId}
-                      onChange={(e) => this.addRemovefromPack(item)}
-                    />
+                    {pack.items.map((item, index) => (
+                      <tr key={index}>
+                        <td>{item.itemId}</td>
+                        <td>{item.itemQty}</td>
+                      </tr>
+                    ))}
                   </td>
-                  <td>{item.itemId}</td>
-                  <td>{item.itemQty}</td>
                 </tr>
               ))}
             </tbody>
