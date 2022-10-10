@@ -34,17 +34,21 @@ class App extends React.Component {
   }
 	searchUser = async (user, e) => {
 		sessionStorage.clear()
+		localStorage.clear()
 			let searched = await axios.post(`http://localhost:4420/login`, {user}, {withCredentials: true})
-				console.log(searched.data)
 				this.setState(
 					{
 						user: searched.data.user,
 						error: searched.data.error,
 						loggedIn: searched.data.loggedIn
 				})
-				sessionStorage.setItem("storedAccess", searched.data.user.permission)
-				sessionStorage.setItem("userFullName", searched.data.user.fullName)
-
+				localStorage.setItem("storedAccess", searched.data.user.permission)
+				localStorage.setItem("userFullName", searched.data.user.fullName)
+				localStorage.setItem("userFirstName", searched.data.user.firstName)
+				localStorage.setItem("userLastName", searched.data.user.lastName)
+				localStorage.setItem("userId", searched.data.user.id)
+				localStorage.setItem("userEmail", searched.data.user.email)
+				localStorage.setItem("emailService", this.state.emailService)
   }
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
   render() {
