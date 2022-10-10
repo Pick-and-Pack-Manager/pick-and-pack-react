@@ -23,7 +23,7 @@ class Profile extends React.Component {
   render() {
 		console.log(localStorage)
     return (
-			localStorage.storedAccess >= 'C' ?
+			localStorage.storedAccess >= 'B' ?
 			<>
 			{/*NAVIGATION SECTION*/}
 			<Nav />
@@ -68,6 +68,8 @@ class Profile extends React.Component {
 								name="formHorizontalRadios"
 								id="formHorizontalRadios1"
 								value='A'
+								defaultChecked={this.state.user.setPermission = 'A' ? true : false}
+								disabled={localStorage.storedAccess < 'C'}
 							/>
 							<Form.Check
 								type="radio"
@@ -75,6 +77,8 @@ class Profile extends React.Component {
 								name="formHorizontalRadios"
 								id="formHorizontalRadios2"
 								value='B'
+								defaultChecked={this.state.user.setPermission = 'B' ? true : false}
+								disabled={localStorage.storedAccess < 'C'}
 							/>
 							<Form.Check
 								type="radio"
@@ -82,6 +86,8 @@ class Profile extends React.Component {
 								name="formHorizontalRadios"
 								id="formHorizontalRadios3"
 								value='C'
+								defaultChecked={this.state.user.setPermission = 'C' ? true : false}
+								disabled={localStorage.storedAccess < 'C'}
 							/>
 							<Form.Check
 								type="radio"
@@ -89,6 +95,8 @@ class Profile extends React.Component {
 								name="formHorizontalRadios"
 								id="formHorizontalRadios2"
 								value='D'
+								defaultChecked={this.state.user.setPermission = 'D' ? true : false}
+								disabled={localStorage.storedAccess < 'D'}
 							/>
 							<Form.Check
 								type="radio"
@@ -96,6 +104,8 @@ class Profile extends React.Component {
 								name="formHorizontalRadios"
 								id="formHorizontalRadios2"
 								value='Z'
+								disabled={localStorage.storedAccess !== 'Z'}
+								defaultChecked={this.state.user.setPermission > 'D' ? true : false}
 							/>
 						</Col>
 					</Form.Group>
