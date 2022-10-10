@@ -99,9 +99,9 @@ class Orders extends React.Component {
   };
 
   render() {
-		console.log(sessionStorage)
+		console.log(localStorage)
     return (
-			sessionStorage.storedAccess > 'A' ?
+			localStorage.storedAccess > 'A' ?
       <>
         {/*NAVIGATION SECTION*/}
         <Nav />

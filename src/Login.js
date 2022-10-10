@@ -14,7 +14,6 @@ class Login extends React.Component {
 
   render()
 	{
-		console.log(sessionStorage)
     return (
 			this.props.loggedIn == true ? <Redirect to="/orders" /> :
 			<Card style={{ width: '35rem' }} className="m-3">
@@ -25,6 +24,7 @@ class Login extends React.Component {
 								email: `${this.state.loginEmail}${this.props.emailService}`,
 								password: this.state.loginPassword
 							}
+							let emailService = this.props.emailService
 							e.preventDefault();
 							this.props.searchUser(user
 							, e)
