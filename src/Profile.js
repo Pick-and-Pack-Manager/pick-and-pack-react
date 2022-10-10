@@ -12,16 +12,18 @@ import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
   state = {
-		canUpdate: localStorage >= 'C' ? true : false,
+		canUpdate: localStorage.storedAccess >= 'C' ? false : true,
 		user: {
 			firstName: localStorage.userFirstName,
 			lastName: localStorage.userLastName,
 			email: localStorage.userEmail,
-			setPermission: localStorage.storedAccess
+			setPermission: localStorage.storedAccess,
+			userName: localStorage.userName
 		}
 	};
   render() {
 		console.log(localStorage)
+
     return (
 			localStorage.storedAccess >= 'B' ?
 			<>
@@ -40,7 +42,7 @@ class Profile extends React.Component {
 					<Form.Label>Email address</Form.Label>
 					<InputGroup className="mb-3">
 						<Form.Control
-							placeholder={this.state.user.email}
+							placeholder={this.state.user.userName}
 							aria-label="Recipient's username"
 							aria-describedby="basic-addon2"
 							readOnly={this.state.canUpdate}
