@@ -11,10 +11,19 @@ import InputGroup from 'react-bootstrap/InputGroup';
 import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
-  state = {};
+  state = {
+		canUpdate: localStorage >= 'C' ? true : false,
+		user: {
+			firstName: localStorage.userFirstName,
+			lastName: localStorage.userLastName,
+			email: localStorage.userEmail,
+			setPermission: localStorage.storedAccess
+		}
+	};
   render() {
+		console.log(localStorage)
     return (
-			sessionStorage.storedAccess >= 'C' ?
+			localStorage.storedAccess >= 'C' ?
 			<>
 			{/*NAVIGATION SECTION*/}
 			<Nav />
@@ -23,19 +32,20 @@ class Profile extends React.Component {
 				<Card.Header as="h5">Create Profile</Card.Header>
 						<Form>
 						<InputGroup className="mb-3" >
-							<InputGroup.Text>First and last name</InputGroup.Text>
-							<Form.Control aria-label="First name" placeholder="First Name" />
-							<Form.Control aria-label="Last name" placeholder="Last Name"/>
+							<InputGroup.Text>First and Last name</InputGroup.Text>
+							<Form.Control aria-label="First name" placeholder={this.state.user.firstName} readOnly={this.state.canUpdate} />
+							<Form.Control aria-label="Last name" placeholder={this.state.user.lastName} readOnly={this.state.canUpdate}/>
 						</InputGroup>
 				<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
 					<Form.Label>Email address</Form.Label>
 					<InputGroup className="mb-3">
 						<Form.Control
-							placeholder="Recipient's username"
+							placeholder={this.state.user.email}
 							aria-label="Recipient's username"
 							aria-describedby="basic-addon2"
+							readOnly={this.state.canUpdate}
 						/>
-						<InputGroup.Text id="basic-addon2">@pioneerwatertanks.com.au</InputGroup.Text>
+						<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
 					</InputGroup>
 				</Form.Group>
 
