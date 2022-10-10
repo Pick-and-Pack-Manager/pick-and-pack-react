@@ -13,6 +13,10 @@ class Order extends React.Component {
         itemId: 222,
         itemQty: 20,
       },
+      {
+        itemId: 333,
+        itemQty: 30,
+      },
     ],
     items: [
       // Functional state to help in the process of picking and unclicking items. Not show in render
@@ -23,6 +27,10 @@ class Order extends React.Component {
       {
         itemId: 222,
         itemQty: 20,
+      },
+      {
+        itemId: 333,
+        itemQty: 30,
       },
     ],
     inpacking: [], // Array: State that contains the items to be added to the packages
