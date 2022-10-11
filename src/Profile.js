@@ -12,7 +12,7 @@ import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
   state = {
-		canUpdate: localStorage.storedAccess >= 'C' ? false : true,
+		canUpdate: localStorage.storedAccess > 'C' ? false : true,
 		user: {
 			firstName: localStorage.userFirstName,
 			lastName: localStorage.userLastName,
