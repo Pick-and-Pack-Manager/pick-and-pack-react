@@ -1,13 +1,16 @@
 import React from "react";
+import axios from "axios";
 import "./App.css";
 import Nav from "./NavComponent.js";
 import {BrowserRouter, Switch, Route, Redirect, Link} from "react-router-dom";
+import Container from 'react-bootstrap/Container'
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
 import Card from 'react-bootstrap/Card'
 import InputGroup from 'react-bootstrap/InputGroup';
+import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
@@ -19,12 +22,32 @@ class Profile extends React.Component {
 			email: localStorage.userEmail,
 			setPermission: localStorage.storedAccess,
 			userName: localStorage.userName
-		}
-	};
+		},
+		supervisors: []
+	}
+	findSupervisors = async () => {
+				let supervisors = await axios.get(`http://localhost:4420/users`,
+					{
+						permission: {
+  						$gte: 'D'
+						}
+					}, {withCredentials: true})
+
+					this.setState({
+							supervisors: supervisors?.data || []
+					})
+
+					console.log(supervisors.data)
+	}
+	componentDidMount() {
+		this.findSupervisors()
+	}
   render() {
-		console.log(localStorage)
+		console.log(this.state.supervisors)
+
 
     return (
+
 			localStorage.storedAccess >= 'B' ?
 			<>
 			{/*NAVIGATION SECTION*/}
@@ -58,16 +81,19 @@ class Profile extends React.Component {
 						Your password is not encrypted
 					</Form.Text>
 				</Form.Group>
+				<Container>
+      <Row>
+        <Col>
 				<fieldset>
 					<Form.Group as={Row} className="mb-3">
-						<Form.Label as="legend" column sm={2}>
+						<Form.Label>
 							Permission Level
 						</Form.Label>
 						<Col sm={10}>
 							<Form.Check
 								type="radio"
 								label="No Access"
-								name="formHorizontalRadios"
+								name="permission"
 								id="formHorizontalRadios1"
 								value='A'
 								defaultChecked={this.state.user.setPermission = 'A' ? true : false}
@@ -76,7 +102,7 @@ class Profile extends React.Component {
 							<Form.Check
 								type="radio"
 								label="View Only"
-								name="formHorizontalRadios"
+								name="permission"
 								id="formHorizontalRadios2"
 								value='B'
 								defaultChecked={this.state.user.setPermission = 'B' ? true : false}
@@ -85,7 +111,7 @@ class Profile extends React.Component {
 							<Form.Check
 								type="radio"
 								label="Storeperson"
-								name="formHorizontalRadios"
+								name="permission"
 								id="formHorizontalRadios3"
 								value='C'
 								defaultChecked={this.state.user.setPermission = 'C' ? true : false}
@@ -94,8 +120,8 @@ class Profile extends React.Component {
 							<Form.Check
 								type="radio"
 								label="Supervisor"
-								name="formHorizontalRadios"
-								id="formHorizontalRadios2"
+								name="permission"
+								id="formHorizontalRadios4"
 								value='D'
 								defaultChecked={this.state.user.setPermission = 'D' ? true : false}
 								disabled={localStorage.storedAccess < 'D'}
@@ -103,8 +129,8 @@ class Profile extends React.Component {
 							<Form.Check
 								type="radio"
 								label="Full Admin"
-								name="formHorizontalRadios"
-								id="formHorizontalRadios2"
+								name="permission"
+								id="formHorizontalRadios5"
 								value='Z'
 								disabled={localStorage.storedAccess !== 'Z'}
 								defaultChecked={this.state.user.setPermission > 'D' ? true : false}
@@ -112,6 +138,20 @@ class Profile extends React.Component {
 						</Col>
 					</Form.Group>
 				</fieldset>
+				</Col>
+        <Col>
+				<Form.Group as={Row} className="mb-3">
+					<Form.Label>
+						Supervisor
+					</Form.Label>
+		        {this.state.supervisors.map((user, i) => (
+					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i}`} label={`${user.email}`} name="supervisor"/>
+					))}
+	      </Form.Group>
+				</Col>
+      </Row>
+    		</Container>
+
 				<Form.Group as={Row}>
 					<Col sm={{ span: 10, offset: 2 }}>
 						<Button type="submit" variant="danger">Create New User. Email will be sent</Button>
