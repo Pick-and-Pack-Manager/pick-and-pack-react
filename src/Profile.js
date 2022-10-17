@@ -21,9 +21,12 @@ class Profile extends React.Component {
 			lastName: localStorage.userLastName,
 			email: localStorage.userEmail,
 			setPermission: localStorage.storedAccess,
-			userName: localStorage.userName
+			userName: localStorage.userName,
+			password: null,
+			accessLevel: localStorage.storedAccess,
+			supervisor: null
 		},
-		supervisors: []
+		supervisors: [],
 	}
 	findSupervisors = async () => {
 				let supervisors = await axios.get(`http://localhost:4420/users`,
@@ -37,14 +40,11 @@ class Profile extends React.Component {
 							supervisors: supervisors?.data || []
 					})
 
-					console.log(supervisors.data)
 	}
 	componentDidMount() {
 		this.findSupervisors()
 	}
   render() {
-		console.log(this.state.supervisors)
-
 
     return (
 
@@ -55,11 +55,20 @@ class Profile extends React.Component {
 			{/*FILTERS SECTION - ITS MISSING THE ICONS*/}
 			<Card style={{ width: '45rem' }} className="m-3">
 				<Card.Header as="h5">Create Profile</Card.Header>
-						<Form>
+						<Form onSubmit={(e) => {
+							e.preventDefault();
+						}
+						}>
 						<InputGroup className="mb-3" >
 							<InputGroup.Text>First and Last name</InputGroup.Text>
-							<Form.Control aria-label="First name" placeholder={this.state.user.firstName} readOnly={this.state.canUpdate} />
-							<Form.Control aria-label="Last name" placeholder={this.state.user.lastName} readOnly={this.state.canUpdate}/>
+							<Form.Control aria-label="First name" placeholder={this.state.user.firstName} readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
+								let setSubState = this.state.users
+								this.state.user.firstName = e.target.value
+								this.setState({setSubState})}}/>
+							<Form.Control aria-label="Last name" placeholder={this.state.user.lastName} readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
+								let setSubState = this.state.users
+								this.state.user.lastName = e.target.value
+								this.setState({setSubState})}}/>
 						</InputGroup>
 				<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
 					<Form.Label>Email address</Form.Label>
@@ -69,6 +78,11 @@ class Profile extends React.Component {
 							aria-label="Recipient's username"
 							aria-describedby="basic-addon2"
 							readOnly={this.state.canUpdate}
+							name="userName"
+							onChange={(e) => {
+								let setSubState = this.state.users
+								this.state.user.userName = e.target.value
+								this.setState({setSubState})}}
 						/>
 						<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
 					</InputGroup>
@@ -76,7 +90,10 @@ class Profile extends React.Component {
 
 				<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" placeholder="Password" />
+					<Form.Control type="password" placeholder="Password" name="password" onChange={(e) => {
+						let setSubState = this.state.users
+						this.state.user.password = e.target.value
+						this.setState({setSubState})}}/>
 					<Form.Text className="text-muted">
 						Your password is not encrypted
 					</Form.Text>
@@ -90,6 +107,7 @@ class Profile extends React.Component {
 							Permission Level
 						</Form.Label>
 						<Col sm={10}>
+
 							<Form.Check
 								type="radio"
 								label="No Access"
@@ -98,6 +116,11 @@ class Profile extends React.Component {
 								value='A'
 								defaultChecked={this.state.user.setPermission = 'A' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
+								onClick={(e) => {
+									let setSubState = this.state.users
+									this.state.user.accessLevel = e.target.value
+									this.setState({setSubState})
+								console.log(this.state.user)}}
 							/>
 							<Form.Check
 								type="radio"
@@ -107,6 +130,11 @@ class Profile extends React.Component {
 								value='B'
 								defaultChecked={this.state.user.setPermission = 'B' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
+								onClick={(e) => {
+									let setSubState = this.state.users
+									this.state.user.accessLevel = e.target.value
+									this.setState({setSubState})
+								console.log(this.state.user)}}
 							/>
 							<Form.Check
 								type="radio"
@@ -116,6 +144,11 @@ class Profile extends React.Component {
 								value='C'
 								defaultChecked={this.state.user.setPermission = 'C' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
+								onClick={(e) => {
+									let setSubState = this.state.users
+									this.state.user.accessLevel = e.target.value
+									this.setState({setSubState})
+								console.log(this.state.user)}}
 							/>
 							<Form.Check
 								type="radio"
@@ -125,6 +158,11 @@ class Profile extends React.Component {
 								value='D'
 								defaultChecked={this.state.user.setPermission = 'D' ? true : false}
 								disabled={localStorage.storedAccess < 'D'}
+								onClick={(e) => {
+									let setSubState = this.state.users
+									this.state.user.accessLevel = e.target.value
+									this.setState({setSubState})
+								console.log(this.state.user)}}
 							/>
 							<Form.Check
 								type="radio"
@@ -134,6 +172,11 @@ class Profile extends React.Component {
 								value='Z'
 								disabled={localStorage.storedAccess !== 'Z'}
 								defaultChecked={this.state.user.setPermission > 'D' ? true : false}
+								onClick={(e) => {
+									let setSubState = this.state.users
+									this.state.user.accessLevel = e.target.value
+									this.setState({setSubState})
+								console.log(this.state.user)}}
 							/>
 						</Col>
 					</Form.Group>
@@ -145,7 +188,13 @@ class Profile extends React.Component {
 						Supervisor
 					</Form.Label>
 		        {this.state.supervisors.map((user, i) => (
-					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i}`} label={`${user.email}`} name="supervisor"/>
+					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i}`} label={`${user.email}`} name="supervisor" value={user._id}
+						onClick={(e) => {
+							let setSubState = this.state.users
+							this.state.user.supervisor = e.target.value
+							this.setState({setSubState})
+						console.log(this.state.user)}}
+						/>
 					))}
 	      </Form.Group>
 				</Col>
