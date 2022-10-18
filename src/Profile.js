@@ -42,11 +42,27 @@ class Profile extends React.Component {
 					})
 
 	}
+	updateUser = async (user, e) => {
+			let updateUser = await axios.patch(`http://localhost:4420/users`, {user}, {withCredentials: true})
+				this.setState({user: {
+					firstName: updateUser.data.user.firstName,
+					lastName: updateUser.data.user.lastName,
+					email: updateUser.data.user.email,
+					setPermission: updateUser.data.user.storedAccess,
+					userName: updateUser.data.user.userName,
+					password: updateUser.data.user.password,
+					accessLevel: updateUser.data.user.storedAccess,
+					userSupervisor: updateUser.data.user.supervisor
+				}
+			})
+				// console.log(updateUser.data.user)
+				console.log(this.state.user)
+			}
 	componentDidMount() {
 		this.findSupervisors()
 	}
   render() {
-
+		// console.log(this.state.user)
     return (
 
 			localStorage.storedAccess >= 'B' ?
@@ -57,16 +73,18 @@ class Profile extends React.Component {
 			<Card style={{ width: '45rem' }} className="m-3">
 				<Card.Header as="h5">Create Profile</Card.Header>
 						<Form onSubmit={(e) => {
-							e.preventDefault();
+							e.preventDefault()
+							this.updateUser(this.state.user, e)
 						}
 						}>
 						<InputGroup className="mb-3" >
 							<InputGroup.Text>First and Last name</InputGroup.Text>
-							<Form.Control aria-label="First name" placeholder={this.state.user.firstName} readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
+							<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
+							 readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
 								let setSubState = this.state.user
 								this.state.user.firstName = e.target.value
 								this.setState({setSubState})}}/>
-							<Form.Control aria-label="Last name" placeholder={this.state.user.lastName} readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
+							<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
 								let setSubState = this.state.user
 								this.state.user.lastName = e.target.value
 								this.setState({setSubState})}}/>
@@ -75,11 +93,12 @@ class Profile extends React.Component {
 					<Form.Label>Email address</Form.Label>
 					<InputGroup className="mb-3">
 						<Form.Control
-							placeholder={this.state.user.userName}
+							placeholder="User Name"
 							aria-label="Recipient's username"
 							aria-describedby="basic-addon2"
 							readOnly={this.state.canUpdate}
 							name="userName"
+							value={this.state.user.userName}
 							onChange={(e) => {
 								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
@@ -91,7 +110,7 @@ class Profile extends React.Component {
 
 				<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" name="password" value={this.state.user.userName} onChange={(e) => {
+					<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
 						let setSubState = this.state.user
 						this.state.user.password = e.target.value
 						this.setState({setSubState})}}/>
