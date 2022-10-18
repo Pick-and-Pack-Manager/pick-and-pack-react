@@ -17,14 +17,15 @@ class Profile extends React.Component {
   state = {
 		canUpdate: localStorage.storedAccess > 'C' ? false : true,
 		user: {
+			id: localStorage.userId,
 			firstName: localStorage.userFirstName,
 			lastName: localStorage.userLastName,
 			email: localStorage.userEmail,
 			setPermission: localStorage.storedAccess,
 			userName: localStorage.userName,
-			password: null,
+			password: localStorage.password,
 			accessLevel: localStorage.storedAccess,
-			supervisor: null
+			userSupervisor: localStorage.supervisor
 		},
 		supervisors: [],
 	}
@@ -62,11 +63,11 @@ class Profile extends React.Component {
 						<InputGroup className="mb-3" >
 							<InputGroup.Text>First and Last name</InputGroup.Text>
 							<Form.Control aria-label="First name" placeholder={this.state.user.firstName} readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
-								let setSubState = this.state.users
+								let setSubState = this.state.user
 								this.state.user.firstName = e.target.value
 								this.setState({setSubState})}}/>
 							<Form.Control aria-label="Last name" placeholder={this.state.user.lastName} readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
-								let setSubState = this.state.users
+								let setSubState = this.state.user
 								this.state.user.lastName = e.target.value
 								this.setState({setSubState})}}/>
 						</InputGroup>
@@ -80,7 +81,7 @@ class Profile extends React.Component {
 							readOnly={this.state.canUpdate}
 							name="userName"
 							onChange={(e) => {
-								let setSubState = this.state.users
+								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
 								this.setState({setSubState})}}
 						/>
@@ -90,8 +91,8 @@ class Profile extends React.Component {
 
 				<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" placeholder="Password" name="password" onChange={(e) => {
-						let setSubState = this.state.users
+					<Form.Control type="password" name="password" value={this.state.user.userName} onChange={(e) => {
+						let setSubState = this.state.user
 						this.state.user.password = e.target.value
 						this.setState({setSubState})}}/>
 					<Form.Text className="text-muted">
@@ -117,7 +118,7 @@ class Profile extends React.Component {
 								defaultChecked={this.state.user.setPermission = 'A' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
 								onClick={(e) => {
-									let setSubState = this.state.users
+									let setSubState = this.state.user
 									this.state.user.accessLevel = e.target.value
 									this.setState({setSubState})
 								console.log(this.state.user)}}
@@ -131,7 +132,7 @@ class Profile extends React.Component {
 								defaultChecked={this.state.user.setPermission = 'B' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
 								onClick={(e) => {
-									let setSubState = this.state.users
+									let setSubState = this.state.user
 									this.state.user.accessLevel = e.target.value
 									this.setState({setSubState})
 								console.log(this.state.user)}}
@@ -145,7 +146,7 @@ class Profile extends React.Component {
 								defaultChecked={this.state.user.setPermission = 'C' ? true : false}
 								disabled={localStorage.storedAccess < 'C'}
 								onClick={(e) => {
-									let setSubState = this.state.users
+									let setSubState = this.state.user
 									this.state.user.accessLevel = e.target.value
 									this.setState({setSubState})
 								console.log(this.state.user)}}
@@ -159,7 +160,7 @@ class Profile extends React.Component {
 								defaultChecked={this.state.user.setPermission = 'D' ? true : false}
 								disabled={localStorage.storedAccess < 'D'}
 								onClick={(e) => {
-									let setSubState = this.state.users
+									let setSubState = this.state.user
 									this.state.user.accessLevel = e.target.value
 									this.setState({setSubState})
 								console.log(this.state.user)}}
@@ -173,7 +174,7 @@ class Profile extends React.Component {
 								disabled={localStorage.storedAccess !== 'Z'}
 								defaultChecked={this.state.user.setPermission > 'D' ? true : false}
 								onClick={(e) => {
-									let setSubState = this.state.users
+									let setSubState = this.state.user
 									this.state.user.accessLevel = e.target.value
 									this.setState({setSubState})
 								console.log(this.state.user)}}
@@ -188,12 +189,15 @@ class Profile extends React.Component {
 						Supervisor
 					</Form.Label>
 		        {this.state.supervisors.map((user, i) => (
-					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i}`} label={`${user.email}`} name="supervisor" value={user._id}
+					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
+						value={user._id}
+						defaultChecked={this.state.user.userSupervisor == user._id}
 						onClick={(e) => {
-							let setSubState = this.state.users
-							this.state.user.supervisor = e.target.value
+							let setSubState = this.state.user
+							this.state.user.userSupervisor = e.target.value
 							this.setState({setSubState})
-						console.log(this.state.user)}}
+							console.log(this.state.user)
+						}}
 						/>
 					))}
 	      </Form.Group>
@@ -204,7 +208,7 @@ class Profile extends React.Component {
 				<Form.Group as={Row}>
 					<Col sm={{ span: 10, offset: 2 }}>
 						<Button type="submit" variant="danger">Create New User. Email will be sent</Button>
-						<Button type="submit" variant="primary">Update</Button>
+						<Button type="submit" variant="primary" type="submit">Update</Button>
 					</Col>
 				</Form.Group>
 			</Form>

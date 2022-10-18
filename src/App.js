@@ -50,6 +50,8 @@ class App extends React.Component {
 				localStorage.setItem("userEmail", searched.data.user.email)
 				localStorage.setItem("emailService", this.state.emailService)
 				localStorage.setItem("userName", searched.data.user.userName)
+				localStorage.setItem("supervisor", searched.data.user.createdBy)
+				localStorage.setItem("password", searched.data.user.password)
   }
   // Route rendering. I put the packing and Shipment middle route just to have a more clear vision on the URL
   render() {
