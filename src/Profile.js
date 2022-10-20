@@ -28,18 +28,24 @@ class Profile extends React.Component {
 			userSupervisor: localStorage.supervisor
 		},
 		supervisors: [],
+		staffUsers: [],
 	}
 	findSupervisors = async () => {
-				let supervisors = await axios.get(`http://localhost:4420/users`,
-					{
-						permission: {
-  						$gte: 'D'
-						}
-					}, {withCredentials: true})
-
+				let supervisors = await axios.get(`http://localhost:4420/users/supervisors`,
+					{}, {withCredentials: true})
 					this.setState({
 							supervisors: supervisors?.data || []
 					})
+
+	}
+	findStaffUsers = async () => {
+				let staffUsers = await axios.get(`http://localhost:4420/users/staff`,
+					{}, {withCredentials: true})
+					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId || localStorage.storedAccess >= 'E')
+					this.setState({
+							staffUsers: filteredUsers
+					})
+					console.log(filteredUsers)
 
 	}
 	updateUser = async (user, e) => {
@@ -55,14 +61,13 @@ class Profile extends React.Component {
 					userSupervisor: updateUser.data.user.supervisor
 				}
 			})
-				// console.log(updateUser.data.user)
 				console.log(this.state.user)
 			}
 	componentDidMount() {
 		this.findSupervisors()
+		this.findStaffUsers()
 	}
   render() {
-		// console.log(this.state.user)
     return (
 
 			localStorage.storedAccess >= 'B' ?
@@ -70,29 +75,32 @@ class Profile extends React.Component {
 			{/*NAVIGATION SECTION*/}
 			<Nav />
 			{/*FILTERS SECTION - ITS MISSING THE ICONS*/}
-			<Card style={{ width: '45rem' }} className="m-3">
-				<Card.Header as="h5">Create Profile</Card.Header>
+			<Container>
+      <Row>
+        <Col>
+						<Card style={{ width: '35rem' }} className="m-3">
+						<Card.Header as="h5">Profile</Card.Header>
 						<Form onSubmit={(e) => {
 							e.preventDefault()
 							this.updateUser(this.state.user, e)
 						}
-						}>
-						<InputGroup className="mb-3" >
-							<InputGroup.Text>First and Last name</InputGroup.Text>
-							<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
-							 readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
-								let setSubState = this.state.user
-								this.state.user.firstName = e.target.value
-								this.setState({setSubState})}}/>
-							<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
-								let setSubState = this.state.user
-								this.state.user.lastName = e.target.value
-								this.setState({setSubState})}}/>
-						</InputGroup>
-				<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
-					<Form.Label>Email address</Form.Label>
-					<InputGroup className="mb-3">
-						<Form.Control
+					}>
+					<InputGroup className="mb-3" >
+					<InputGroup.Text>First and Last name</InputGroup.Text>
+					<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
+					readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
+						let setSubState = this.state.user
+						this.state.user.firstName = e.target.value
+						this.setState({setSubState})}}/>
+						<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
+							let setSubState = this.state.user
+							this.state.user.lastName = e.target.value
+							this.setState({setSubState})}}/>
+							</InputGroup>
+							<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
+							<Form.Label>Email address</Form.Label>
+							<InputGroup className="mb-3">
+							<Form.Control
 							placeholder="User Name"
 							aria-label="Recipient's username"
 							aria-describedby="basic-addon2"
@@ -102,136 +110,168 @@ class Profile extends React.Component {
 							onChange={(e) => {
 								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
+								this.state.user.email = `${e.target.value}${localStorage.emailService}`
 								this.setState({setSubState})}}
-						/>
-						<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
-					</InputGroup>
-				</Form.Group>
+								/>
+								<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
+								</InputGroup>
+								</Form.Group>
 
-				<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
-					<Form.Label>Password</Form.Label>
-					<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
-						let setSubState = this.state.user
-						this.state.user.password = e.target.value
-						this.setState({setSubState})}}/>
-					<Form.Text className="text-muted">
-						Your password is not encrypted
-					</Form.Text>
-				</Form.Group>
-				<Container>
-      <Row>
-        <Col>
-				<fieldset>
-					<Form.Group as={Row} className="mb-3">
-						<Form.Label>
-							Permission Level
-						</Form.Label>
-						<Col sm={10}>
+								<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
+								<Form.Label>Password</Form.Label>
+								<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
+									let setSubState = this.state.user
+									this.state.user.password = e.target.value
+									this.setState({setSubState})}}/>
+									<Form.Text className="text-muted">
+									Your password is not encrypted
+									</Form.Text>
+									</Form.Group>
+									<Container>
+									<Row>
+									<Col>
+									<fieldset>
+									<Form.Group as={Row} className="mb-3">
+									<Form.Label>
+									Permission Level
+									</Form.Label>
+									<Col sm={10}>
 
-							<Form.Check
-								type="radio"
-								label="No Access"
-								name="permission"
-								id="formHorizontalRadios1"
-								value='A'
-								defaultChecked={this.state.user.setPermission = 'A' ? true : false}
-								disabled={localStorage.storedAccess < 'C'}
-								onClick={(e) => {
-									let setSubState = this.state.user
-									this.state.user.accessLevel = e.target.value
-									this.setState({setSubState})
-								console.log(this.state.user)}}
-							/>
-							<Form.Check
-								type="radio"
-								label="View Only"
-								name="permission"
-								id="formHorizontalRadios2"
-								value='B'
-								defaultChecked={this.state.user.setPermission = 'B' ? true : false}
-								disabled={localStorage.storedAccess < 'C'}
-								onClick={(e) => {
-									let setSubState = this.state.user
-									this.state.user.accessLevel = e.target.value
-									this.setState({setSubState})
-								console.log(this.state.user)}}
-							/>
-							<Form.Check
-								type="radio"
-								label="Storeperson"
-								name="permission"
-								id="formHorizontalRadios3"
-								value='C'
-								defaultChecked={this.state.user.setPermission = 'C' ? true : false}
-								disabled={localStorage.storedAccess < 'C'}
-								onClick={(e) => {
-									let setSubState = this.state.user
-									this.state.user.accessLevel = e.target.value
-									this.setState({setSubState})
-								console.log(this.state.user)}}
-							/>
-							<Form.Check
-								type="radio"
-								label="Supervisor"
-								name="permission"
-								id="formHorizontalRadios4"
-								value='D'
-								defaultChecked={this.state.user.setPermission = 'D' ? true : false}
-								disabled={localStorage.storedAccess < 'D'}
-								onClick={(e) => {
-									let setSubState = this.state.user
-									this.state.user.accessLevel = e.target.value
-									this.setState({setSubState})
-								console.log(this.state.user)}}
-							/>
-							<Form.Check
-								type="radio"
-								label="Full Admin"
-								name="permission"
-								id="formHorizontalRadios5"
-								value='Z'
-								disabled={localStorage.storedAccess !== 'Z'}
-								defaultChecked={this.state.user.setPermission > 'D' ? true : false}
-								onClick={(e) => {
-									let setSubState = this.state.user
-									this.state.user.accessLevel = e.target.value
-									this.setState({setSubState})
-								console.log(this.state.user)}}
-							/>
-						</Col>
-					</Form.Group>
-				</fieldset>
+									<Form.Check
+									type="radio"
+									label="No Access"
+									name="permission"
+									id="formHorizontalRadios1"
+									value='A'
+									defaultChecked={this.state.user.setPermission = 'A' ? true : false}
+									disabled={localStorage.storedAccess < 'C'}
+									onClick={(e) => {
+										let setSubState = this.state.user
+										this.state.user.accessLevel = e.target.value
+										this.setState({setSubState})
+										console.log(this.state.user)}}
+										/>
+										<Form.Check
+										type="radio"
+										label="View Only"
+										name="permission"
+										id="formHorizontalRadios2"
+										value='B'
+										defaultChecked={this.state.user.setPermission = 'B' ? true : false}
+										disabled={localStorage.storedAccess < 'C'}
+										onClick={(e) => {
+											let setSubState = this.state.user
+											this.state.user.accessLevel = e.target.value
+											this.setState({setSubState})
+											console.log(this.state.user)}}
+											/>
+											<Form.Check
+											type="radio"
+											label="Storeperson"
+											name="permission"
+											id="formHorizontalRadios3"
+											value='C'
+											defaultChecked={this.state.user.setPermission = 'C' ? true : false}
+											disabled={localStorage.storedAccess < 'C'}
+											onClick={(e) => {
+												let setSubState = this.state.user
+												this.state.user.accessLevel = e.target.value
+												this.setState({setSubState})
+												console.log(this.state.user)}}
+												/>
+												<Form.Check
+												type="radio"
+												label="Supervisor"
+												name="permission"
+												id="formHorizontalRadios4"
+												value='D'
+												defaultChecked={this.state.user.setPermission = 'D' ? true : false}
+												disabled={localStorage.storedAccess < 'D'}
+												onClick={(e) => {
+													let setSubState = this.state.user
+													this.state.user.accessLevel = e.target.value
+													this.setState({setSubState})
+													console.log(this.state.user)}}
+													/>
+													<Form.Check
+													type="radio"
+													label="Full Admin"
+													name="permission"
+													id="formHorizontalRadios5"
+													value='Z'
+													disabled={localStorage.storedAccess !== 'Z'}
+													defaultChecked={this.state.user.setPermission > 'D' ? true : false}
+													onClick={(e) => {
+														let setSubState = this.state.user
+														this.state.user.accessLevel = e.target.value
+														this.setState({setSubState})
+														console.log(this.state.user)}}
+														/>
+														</Col>
+														</Form.Group>
+														</fieldset>
+														</Col>
+														<Col>
+														<Form.Group as={Row} className="mb-3">
+														<Form.Label>
+														Supervisor
+														</Form.Label>
+														{this.state.supervisors.map((user, i) => (
+															<Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
+															value={user._id}
+															defaultChecked={this.state.user.userSupervisor == user._id}
+															onClick={(e) => {
+																let setSubState = this.state.user
+																this.state.user.userSupervisor = e.target.value
+																this.setState({setSubState})
+																console.log(this.state.user)
+															}}
+															/>
+														))}
+														</Form.Group>
+														</Col>
+														</Row>
+														</Container>
+
+														<Form.Group as={Row}>
+														<Col sm={{ span: 10, offset: 2 }}>
+
+														<Button type="submit" variant="primary" type="submit">Update</Button>
+														</Col>
+														</Form.Group>
+														</Form>
+														</Card>
+
 				</Col>
         <Col>
-				<Form.Group as={Row} className="mb-3">
-					<Form.Label>
-						Supervisor
-					</Form.Label>
-		        {this.state.supervisors.map((user, i) => (
-					  <Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
-						value={user._id}
-						defaultChecked={this.state.user.userSupervisor == user._id}
-						onClick={(e) => {
-							let setSubState = this.state.user
-							this.state.user.userSupervisor = e.target.value
-							this.setState({setSubState})
-							console.log(this.state.user)
-						}}
-						/>
-					))}
-	      </Form.Group>
+				<Card style={{ width: '20rem' }} className="m-3">
+					<Card.Header as="h5">Select Staff</Card.Header>
+						<Form>
+						<Button type="submit" variant="danger">Create New User. Email will be sent</Button>
+						<Form.Group as={Row} className="mb-3">
+						<Container>
+							<Form.Label>
+							Staff to update where you are Supervisor
+							</Form.Label>
+								{this.state.staffUsers.map((user, i) => (
+								<Card key={i} value={user._id} name="staffMember">
+									<Card.Header>{`${user.firstName} ${user.lastName}`}</Card.Header>
+									<Card.Body>
+										<Card.Title>{user.email}</Card.Title>
+										<Card.Text>
+											{`Permission Level ${user.permission}`}
+										</Card.Text>
+										<Button variant="primary" type="submit">Update User</Button>
+									</Card.Body>
+								</Card>
+							))}
+							</Container>
+						</Form.Group>
+						</Form>
+				</Card>
 				</Col>
       </Row>
-    		</Container>
-
-				<Form.Group as={Row}>
-					<Col sm={{ span: 10, offset: 2 }}>
-						<Button type="submit" variant="danger">Create New User. Email will be sent</Button>
-						<Button type="submit" variant="primary" type="submit">Update</Button>
-					</Col>
-				</Form.Group>
-			</Form>
-			</Card>
+    </Container>
 			</>
 			:
 			<Redirect to="/" />
