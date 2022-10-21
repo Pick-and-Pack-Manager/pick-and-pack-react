@@ -33,19 +33,20 @@ class Profile extends React.Component {
 	findSupervisors = async () => {
 				let supervisors = await axios.get(`http://localhost:4420/users/supervisors`,
 					{}, {withCredentials: true})
+					let filteredSupervisors = supervisors.data.filter(user => user._id != this.state.user.id)
+					console.log(filteredSupervisors)
 					this.setState({
-							supervisors: supervisors?.data || []
+							supervisors: filteredSupervisors
 					})
 
 	}
 	findStaffUsers = async () => {
 				let staffUsers = await axios.get(`http://localhost:4420/users/staff`,
 					{}, {withCredentials: true})
-					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId || localStorage.storedAccess >= 'E')
+					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId && user._id != this.state.user.id)
 					this.setState({
 							staffUsers: filteredUsers
 					})
-					console.log(filteredUsers)
 
 	}
 	updateUser = async (user, e) => {
