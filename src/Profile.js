@@ -43,15 +43,17 @@ class Profile extends React.Component {
 	findStaffUsers = async () => {
 				let staffUsers = await axios.get(`http://localhost:4420/users/staff`,
 					{}, {withCredentials: true})
-					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId && user._id != this.state.user.id)
+					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId && user._id != this.state.user.id || user.accessLevel >= 'Z')
 					this.setState({
 							staffUsers: filteredUsers
 					})
 
 	}
 	updateUser = async (user, e) => {
+		console.log(user)
 			let updateUser = await axios.patch(`http://localhost:4420/users`, {user}, {withCredentials: true})
 				this.setState({user: {
+					id: updateUser.data.user._id,
 					firstName: updateUser.data.user.firstName,
 					lastName: updateUser.data.user.lastName,
 					email: updateUser.data.user.email,
@@ -201,7 +203,7 @@ class Profile extends React.Component {
 													id="formHorizontalRadios5"
 													value='Z'
 													disabled={localStorage.storedAccess !== 'Z'}
-													defaultChecked={this.state.user.setPermission > 'D' ? true : false}
+													defaultChecked={this.state.user.setPermission = 'Z' ? true : false}
 													onClick={(e) => {
 														let setSubState = this.state.user
 														this.state.user.accessLevel = e.target.value
