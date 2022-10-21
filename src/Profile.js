@@ -21,7 +21,6 @@ class Profile extends React.Component {
 			firstName: localStorage.userFirstName,
 			lastName: localStorage.userLastName,
 			email: localStorage.userEmail,
-			setPermission: localStorage.storedAccess,
 			userName: localStorage.userName,
 			password: localStorage.password,
 			accessLevel: localStorage.storedAccess,
@@ -43,7 +42,7 @@ class Profile extends React.Component {
 	findStaffUsers = async () => {
 				let staffUsers = await axios.get(`http://localhost:4420/users/staff`,
 					{}, {withCredentials: true})
-					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId && user._id != this.state.user.id || user.accessLevel >= 'Z')
+					let filteredUsers = staffUsers.data.filter(user => user.userSupervisor == localStorage.userId && user._id != this.state.user.id || localStorage.storedAccess >= 'Z' && user._id != this.state.user.id)
 					this.setState({
 							staffUsers: filteredUsers
 					})
@@ -57,18 +56,34 @@ class Profile extends React.Component {
 					firstName: updateUser.data.user.firstName,
 					lastName: updateUser.data.user.lastName,
 					email: updateUser.data.user.email,
-					setPermission: updateUser.data.user.storedAccess,
 					userName: updateUser.data.user.userName,
 					password: updateUser.data.user.password,
-					accessLevel: updateUser.data.user.storedAccess,
+					accessLevel: updateUser.data.user.permission,
 					userSupervisor: updateUser.data.user.supervisor
 				}
 			})
 				console.log(this.state.user)
 			}
+			findUser = async (user, e) => {
+				console.log(user)
+					let updateUser = await axios.get(`http://localhost:4420/users/getuser`, {user}, {withCredentials: true})
+						this.setState({user: {
+							id: updateUser.data.user._id,
+							firstName: updateUser.data.user.firstName,
+							lastName: updateUser.data.user.lastName,
+							email: updateUser.data.user.email,
+							userName: updateUser.data.user.userName,
+							password: updateUser.data.user.password,
+							accessLevel: updateUser.data.user.permission,
+							userSupervisor: updateUser.data.user.supervisor
+						}
+					})
+					console.log("RAN")
+					}
 	componentDidMount() {
 		this.findSupervisors()
 		this.findStaffUsers()
+		this.findUser()
 	}
   render() {
     return (
@@ -146,7 +161,7 @@ class Profile extends React.Component {
 									name="permission"
 									id="formHorizontalRadios1"
 									value='A'
-									defaultChecked={this.state.user.setPermission = 'A' ? true : false}
+									defaultChecked={this.state.user.accessLevel = 'A' ? true : false}
 									disabled={localStorage.storedAccess < 'C'}
 									onClick={(e) => {
 										let setSubState = this.state.user
@@ -160,7 +175,7 @@ class Profile extends React.Component {
 										name="permission"
 										id="formHorizontalRadios2"
 										value='B'
-										defaultChecked={this.state.user.setPermission = 'B' ? true : false}
+										defaultChecked={this.state.user.accessLevel = 'B' ? true : false}
 										disabled={localStorage.storedAccess < 'C'}
 										onClick={(e) => {
 											let setSubState = this.state.user
@@ -174,7 +189,7 @@ class Profile extends React.Component {
 											name="permission"
 											id="formHorizontalRadios3"
 											value='C'
-											defaultChecked={this.state.user.setPermission = 'C' ? true : false}
+											defaultChecked={this.state.user.accessLevel = 'C' ? true : false}
 											disabled={localStorage.storedAccess < 'C'}
 											onClick={(e) => {
 												let setSubState = this.state.user
@@ -188,7 +203,7 @@ class Profile extends React.Component {
 												name="permission"
 												id="formHorizontalRadios4"
 												value='D'
-												defaultChecked={this.state.user.setPermission = 'D' ? true : false}
+												defaultChecked={this.state.user.accessLevel = 'D' ? true : false}
 												disabled={localStorage.storedAccess < 'D'}
 												onClick={(e) => {
 													let setSubState = this.state.user
@@ -203,7 +218,7 @@ class Profile extends React.Component {
 													id="formHorizontalRadios5"
 													value='Z'
 													disabled={localStorage.storedAccess !== 'Z'}
-													defaultChecked={this.state.user.setPermission = 'Z' ? true : false}
+													defaultChecked={this.state.user.accessLevel = 'Z' ? true : false}
 													onClick={(e) => {
 														let setSubState = this.state.user
 														this.state.user.accessLevel = e.target.value
@@ -257,14 +272,21 @@ class Profile extends React.Component {
 							Staff to update where you are Supervisor
 							</Form.Label>
 								{this.state.staffUsers.map((user, i) => (
-								<Card key={i} value={user._id} name="staffMember">
+								<Card key={i} value={user._id} name="staffMember" onClick={(e) => {
+									let selectedUser = user._id
+									console.log('CLICKED')
+									console.log(selectedUser)
+									e.preventDefault()
+									this.findUser(selectedUser)
+								}
+							}>
 									<Card.Header>{`${user.firstName} ${user.lastName}`}</Card.Header>
 									<Card.Body>
 										<Card.Title>{user.email}</Card.Title>
 										<Card.Text>
 											{`Permission Level ${user.permission}`}
 										</Card.Text>
-										<Button variant="primary" type="submit">Update User</Button>
+										<Button variant="primary" type="submit" >Update User</Button>
 									</Card.Body>
 								</Card>
 							))}
