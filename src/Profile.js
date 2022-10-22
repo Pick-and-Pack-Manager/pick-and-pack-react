@@ -64,26 +64,26 @@ class Profile extends React.Component {
 			})
 				console.log(this.state.user)
 			}
-			findUser = async (user, e) => {
-				console.log(user)
-					let updateUser = await axios.get(`http://localhost:4420/users/getuser`, {user}, {withCredentials: true})
-						this.setState({user: {
-							id: updateUser.data.user._id,
-							firstName: updateUser.data.user.firstName,
-							lastName: updateUser.data.user.lastName,
-							email: updateUser.data.user.email,
-							userName: updateUser.data.user.userName,
-							password: updateUser.data.user.password,
-							accessLevel: updateUser.data.user.permission,
-							userSupervisor: updateUser.data.user.supervisor
-						}
-					})
-					console.log("RAN")
-					}
+	findUser = async (selectedUser) => {
+			let findUser = await axios.post(`http://localhost:4420/users/getuser`, {selectedUser}, {withCredentials: true})
+				console.log(findUser.data)
+				let setSubState = this.state.user
+				this.state.user.id = findUser.data._id
+				this.state.user.firstName = findUser.data.firstName
+				this.state.user.lastName = findUser.data.lastName
+				this.state.user.email = findUser.data.email
+				this.state.user.userName = findUser.data.userName
+				this.state.user.password = findUser.data.password
+				this.state.user.accessLevel = findUser.data.permission
+				this.state.user.userSupervisor = findUser.data.supervisor
+				this.setState({setSubState})
+				this.findSupervisors()
+				this.findStaffUsers()
+			console.log(this.state.user)
+			}
 	componentDidMount() {
 		this.findSupervisors()
 		this.findStaffUsers()
-		this.findUser()
 	}
   render() {
     return (
@@ -273,11 +273,9 @@ class Profile extends React.Component {
 							</Form.Label>
 								{this.state.staffUsers.map((user, i) => (
 								<Card key={i} value={user._id} name="staffMember" onClick={(e) => {
-									let selectedUser = user._id
 									console.log('CLICKED')
-									console.log(selectedUser)
 									e.preventDefault()
-									this.findUser(selectedUser)
+									this.findUser(user)
 								}
 							}>
 									<Card.Header>{`${user.firstName} ${user.lastName}`}</Card.Header>
