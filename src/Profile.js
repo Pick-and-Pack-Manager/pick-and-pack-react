@@ -85,7 +85,7 @@ class Profile extends React.Component {
 					})
 	}
 	updateUser = async (user, e) => {
-		console.log('UPDATE')
+		console.log('UPDATE USER')
 		user = this.state.user
 		console.log(user)
 			let updateUser = await axios.patch(`http://localhost:4420/users`, {user}, {withCredentials: true})
@@ -135,10 +135,9 @@ class Profile extends React.Component {
 				this.render()
 				console.log(findUser.data.user)
 			}
-	addNewUser = async () => {
+	addNewUserStart = () => {
 		console.log('ADD NEW USER START')
 		this.setState({changeType: 'Add New User'})
-
 		let setSubState = this.state.user
 		setSubState.id = null
 		setSubState.firstName = 'First Name'
@@ -154,6 +153,29 @@ class Profile extends React.Component {
 		this.render()
 		console.log(setSubState)
 	}
+	addNewUser = async (user, e) => {
+		console.log('ADD NEW USER TO DATABASE')
+		user = this.state.user
+		console.log(user)
+			let addUser = await axios.post(`http://localhost:4420/users/addnewuser`, {user}, {withCredentials: true})
+				console.log(addUser)
+				let fullName = await addUser.data.firstName + ' ' +  await addUser.data.lastName
+				let setSubState = this.state.user
+				setSubState.id = addUser.data._id
+				setSubState.userFullName = fullName
+				setSubState.firstName = addUser.data.firstName
+				setSubState.lastName = addUser.data.lastName
+				setSubState.email = addUser.data.email
+				setSubState.userName = addUser.data.userName
+				setSubState.password = addUser.data.password
+				setSubState.storedAccess = addUser.data.storedAccess
+				setSubState.userSupervisor = addUser.data.supervisor
+				this.setState({setSubState})
+				this.setState({changeType: 'New User Profile'})
+				this.setState({addOrUpdate: false})
+				this.render()
+
+}
 	componentDidMount() {
 		this.findSupervisors()
 		this.findStaffUsers()
@@ -167,16 +189,28 @@ class Profile extends React.Component {
 		console.log(canAddUser)
 		let addOrUpdateButton
 		let addNewUserButton
-		if (this.state.addOrUpdate == true || this.state.addOrUpdate == null || canAddUser == true) {
-			addOrUpdateButton = <Button type="submit" variant="danger" >Create New User. Email will be sent</Button>
+		let warningMessage
+		if (this.state.addOrUpdate == true || this.state.addOrUpdate == null || canAddUser == true && this.state.changeType == 'Add New User') {
+			addOrUpdateButton = <Button type="submit" variant="danger" onClick={(e) => {
+				console.log('Add User Clicked')
+				console.log(this.state.user)
+				e.preventDefault()
+				let fullName = this.state.user.firstName + ' ' +  this.state.user.lastName
+				let setSubState = this.state.user
+				setSubState.userFullName = fullName
+				setSubState.createdBy = localStorage.userId
+				this.setState({setSubState})
+				this.addNewUser()
+			}}>Create New User. Email will be sent</Button>
 		} else if (this.state.changeType == 'Add New User') {
 			addOrUpdateButton = <></>
+			warningMessage = <Alert key='danger' variant='danger'>New Users need all details completed. Please ensure correctly filled out. Then Button to add new user will show</Alert>
 		} else addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
 		if (localStorage.storedAccess >= 'D') {
 			addNewUserButton = <Button type="submit" variant="warning" onClick={(e) => {
-				console.log('Add User Clicked')
+				console.log('Add New User Clicked')
 				e.preventDefault()
-				this.addNewUser()
+				this.addNewUserStart()
 			}}>Add New User. Email will be sent</Button>
 		} else {
 
@@ -193,6 +227,7 @@ class Profile extends React.Component {
         <Col>
 						<Card style={{ width: '35rem' }} className="m-3">
 						<Card.Header as="h5">{this.state.changeType}</Card.Header>
+						{warningMessage}
 						<Form onSubmit={(e) => {
 							e.preventDefault()
 							this.updateUser(this.state.user, e)
