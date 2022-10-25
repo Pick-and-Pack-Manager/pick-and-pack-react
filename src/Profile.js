@@ -35,6 +35,11 @@ class Profile extends React.Component {
 		setSubState.storedAccess = e.target.value
 		this.setState({setSubState})
 	}
+	handleSupervisorChange = (e) => {
+		let setSubState = this.state.user
+		setSubState.userSupervisor = e.target.value
+		this.setState({setSubState})
+	}
 	updateLocalState = async () => {
 		console.log('update state')
 		console.log(this.state.user)
@@ -127,12 +132,29 @@ class Profile extends React.Component {
 				this.render()
 				console.log(findUser.data.user)
 			}
+	addNewUser = async () => {
+		console.log('ADD NEW USER START')
+
+		let setSubState = this.state.user
+		setSubState.id = null
+		setSubState.firstName = 'First Name'
+		setSubState.lastName = 'Last Name'
+		setSubState.email = null
+		setSubState.userName = 'Email User Name'
+		setSubState.password = "1234"
+		setSubState.storedAccess = "A"
+		setSubState.userSupervisor = localStorage.userId
+		setSubState.userFullName = null
+		this.setState({setSubState})
+		console.log(setSubState)
+		this.findSupervisors()
+		this.render()
+	}
 	componentDidMount() {
 		this.findSupervisors()
 		this.findStaffUsers()
 	}
   render() {
-    return (
 
 			localStorage.storedAccess >= 'B' ?
 			<>
@@ -153,11 +175,15 @@ class Profile extends React.Component {
 					<InputGroup.Text>First and Last name</InputGroup.Text>
 					<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
 					readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
-						this.state.user.firstName = e.target.value}}/>
+						let setSubState = this.state.user
+						this.state.user.firstName = e.target.value
+						this.setState({setSubState})
+					}}/>
 						<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
 							let setSubState = this.state.user
 							this.state.user.lastName = e.target.value
-							this.setState({setSubState})}}/>
+							this.setState({setSubState})}
+						}/>
 							</InputGroup>
 							<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
 							<Form.Label>Email address</Form.Label>
@@ -170,8 +196,10 @@ class Profile extends React.Component {
 							name="userName"
 							value={this.state.user.userName}
 							onChange={(e) => {
+								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
 								this.state.user.email = `${e.target.value}${localStorage.emailService}`
+								this.setState({setSubState})
 								}}
 								/>
 								<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
@@ -181,7 +209,9 @@ class Profile extends React.Component {
 								<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 								<Form.Label>Password</Form.Label>
 								<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
+									let setSubState = this.state.user
 									this.state.user.password = e.target.value
+									this.setState({setSubState})
 									}}/>
 									<Form.Text className="text-muted">
 									Your password is not encrypted
@@ -275,22 +305,21 @@ class Profile extends React.Component {
 														{this.state.supervisors.map((user, i) => (
 															<Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
 															value={user._id}
-															defaultChecked={this.state.user.userSupervisor = user._id}
+															checked={this.state.user.userSupervisor === user._id}
 															onClick={(e) => {
-																this.state.user.userSupervisor = e.target.value
+																this.handleSupervisorChange(e)
 																console.log(this.state.user)
 															}}
 															/>
 														))}
 														</Form.Group>
+
 														</Col>
 														</Row>
 														</Container>
-
 														<Form.Group as={Row}>
 														<Col sm={{ span: 10, offset: 2 }}>
-
-														<Button type="submit" variant="primary" type="submit">Update</Button>
+														{addOrUpdateButton}
 														</Col>
 														</Form.Group>
 														</Form>
@@ -301,7 +330,7 @@ class Profile extends React.Component {
 				<Card style={{ width: '20rem' }} className="m-3">
 					<Card.Header as="h5">Select Staff</Card.Header>
 						<Form>
-						<Button type="submit" variant="danger">Create New User. Email will be sent</Button>
+							{addNewUserButton}
 						<Form.Group as={Row} className="mb-3">
 						<Container>
 							<Form.Label>
