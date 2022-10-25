@@ -163,16 +163,15 @@ class Profile extends React.Component {
 		let canAddUser = false
 		if (this.state.user.firstName == "First Name" || this.state.user.lastName == "Last Name" || this.state.user.userName == "Email User Name" || this.state.user.password == "1234") {
 			canAddUser = false
-
 		} else canAddUser = true
 		console.log(canAddUser)
 		let addOrUpdateButton
 		let addNewUserButton
 		if (this.state.addOrUpdate == true || this.state.addOrUpdate == null || canAddUser == true) {
 			addOrUpdateButton = <Button type="submit" variant="danger" >Create New User. Email will be sent</Button>
-		} else if (canAddUser == true) {
-			addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
-		}
+		} else if (this.state.changeType == 'Add New User') {
+			addOrUpdateButton = <></>
+		} else addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
 		if (localStorage.storedAccess >= 'D') {
 			addNewUserButton = <Button type="submit" variant="warning" onClick={(e) => {
 				console.log('Add User Clicked')
