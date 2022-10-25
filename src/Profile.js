@@ -23,40 +23,47 @@ class Profile extends React.Component {
 			email: localStorage.userEmail,
 			userName: localStorage.userName,
 			password: localStorage.password,
-			accessLevel: localStorage.storedAccess,
+			storedAccess: localStorage.storedAccess,
 			userSupervisor: localStorage.supervisor,
 			userFullName: localStorage.userFullName,
 		},
 		supervisors: [],
 		staffUsers: [],
 	}
+	handlePermission = (e) => {
+		let setSubState = this.state.user
+		setSubState.storedAccess = e.target.value
+		this.setState({setSubState})
+	}
 	updateLocalState = async () => {
+		console.log('update state')
+		console.log(this.state.user)
+		await this.findUser(this.state.user)
 		await sessionStorage.clear()
-		localStorage.removeItem("storedAccess")
-		localStorage.removeItem("userFullName")
-		localStorage.removeItem("userFirstName")
-		localStorage.removeItem("userLastName")
-		localStorage.removeItem("userId")
-		localStorage.removeItem("userEmail")
-		localStorage.removeItem("userName")
-		localStorage.removeItem("supervisor")
-		localStorage.removeItem("password")
-
-		localStorage.setItem("storedAccess", this.state.user.accessLevel)
-		localStorage.setItem("userFullName", this.state.user.userFullName)
-		localStorage.setItem("userFirstName", this.state.user.firstName)
-		localStorage.setItem("userLastName", this.state.user.lastName)
-		localStorage.setItem("userId", this.state.user.id)
-		localStorage.setItem("userEmail", this.state.user.email)
-		localStorage.setItem("userName", this.state.user.userName)
-		localStorage.setItem("supervisor", this.state.user.userSupervisor)
-		localStorage.setItem("password", this.state.user.password)
+		await localStorage.removeItem("storedAccess")
+		await localStorage.removeItem("userFullName")
+		await localStorage.removeItem("userFirstName")
+		await localStorage.removeItem("userLastName")
+		await localStorage.removeItem("userId")
+		await localStorage.removeItem("userEmail")
+		await localStorage.removeItem("userName")
+		await localStorage.removeItem("supervisor")
+		await localStorage.removeItem("password")
+		await localStorage.setItem("storedAccess", this.state.user.storedAccess)
+		await localStorage.setItem("userFullName", this.state.user.userFullName)
+		await localStorage.setItem("userFirstName", this.state.user.firstName)
+		await localStorage.setItem("userLastName", this.state.user.lastName)
+		await localStorage.setItem("userId", this.state.user.id)
+		await localStorage.setItem("userEmail", this.state.user.email)
+		await localStorage.setItem("userName", this.state.user.userName)
+		await localStorage.setItem("supervisor", this.state.user.userSupervisor)
+		await localStorage.setItem("password", this.state.user.password)
 	}
 	findSupervisors = async () => {
 				let supervisors = await axios.get(`http://localhost:4420/users/supervisors`,
 					{}, {withCredentials: true})
 					let filteredSupervisors = supervisors.data.filter(user => user._id != this.state.user.id)
-					console.log(filteredSupervisors)
+					// console.log(filteredSupervisors)
 					this.setState({
 							supervisors: filteredSupervisors
 					})
@@ -70,41 +77,55 @@ class Profile extends React.Component {
 					})
 	}
 	updateUser = async (user, e) => {
+		console.log('UPDATE')
+		user = this.state.user
 		console.log(user)
 			let updateUser = await axios.patch(`http://localhost:4420/users`, {user}, {withCredentials: true})
-				await this.setState({user: {
-					id: updateUser.data.user._id,
-					userFullName: `${updateUser.data.user.firstName} ${updateUser.data.user.lastName}`,
-					firstName: updateUser.data.user.firstName,
-					lastName: updateUser.data.user.lastName,
-					email: updateUser.data.user.email,
-					userName: updateUser.data.user.userName,
-					password: updateUser.data.user.password,
-					accessLevel: updateUser.data.user.permission,
-					userSupervisor: updateUser.data.user.supervisor
+				console.log(updateUser)
+				let fullName = await updateUser.data.user.firstName + ' ' +  await updateUser.data.user.lastName
+				let setSubState = this.state.user
+				setSubState.id = updateUser.data.user.id
+				setSubState.userFullName = fullName
+				setSubState.firstName = updateUser.data.user.firstName
+				setSubState.lastName = updateUser.data.user.lastName
+				setSubState.email = updateUser.data.user.email
+				setSubState.userName = updateUser.data.user.userName
+				setSubState.password = updateUser.data.user.password
+				setSubState.storedAccess = updateUser.data.user.storedAccess
+				setSubState.userSupervisor = updateUser.data.user.supervisor
+				this.setState({setSubState})
+			if (this.state.user.id == localStorage.userId) {
+				console.log('SAME USER')
+				this.updateLocalState()}
+				else {
+					await this.findUser(this.state.user)
 				}
-			})
-			if (this.state.user.id == localStorage.userId) {await this.updateLocalState()}
-				console.log(this.state.user)
 
 }
 	findUser = async (selectedUser) => {
-			let findUser = await axios.post(`http://localhost:4420/users/getuser`, {selectedUser}, {withCredentials: true})
-				console.log(findUser.data)
+		console.log('app FIND USER')
+		console.log(selectedUser)
+			let findUser = await axios.post(`http://localhost:4420/users/finduser`, {selectedUser}, {withCredentials: true})
+				console.log('Find User Data')
+				console.log(this.state.user)
+				let fullName = await findUser.data.user.firstName + ' ' +  await findUser.data.user.lastName
+				console.log(findUser.data.user)
 				let setSubState = this.state.user
-				this.state.user.id = findUser.data._id
-				this.state.user.userFullName = `${findUser.data.user.firstName} ${findUser.data.user.lastName}`
-				this.state.user.firstName = findUser.data.firstName
-				this.state.user.lastName = findUser.data.lastName
-				this.state.user.email = findUser.data.email
-				this.state.user.userName = findUser.data.userName
-				this.state.user.password = findUser.data.password
-				this.state.user.accessLevel = findUser.data.permission
-				this.state.user.userSupervisor = findUser.data.supervisor
+					setSubState.id = findUser.data.user._id
+					setSubState.firstName = findUser.data.user.firstName
+					setSubState.lastName = findUser.data.user.lastName
+					setSubState.email = findUser.data.user.email
+					setSubState.userName = findUser.data.user.userName
+					setSubState.password = findUser.data.user.password
+					setSubState.storedAccess = findUser.data.user.permission
+					setSubState.userSupervisor = findUser.data.user.userSupervisor
+					setSubState.userFullName = fullName
+				console.log(this.state)
 				this.setState({setSubState})
 				this.findSupervisors()
 				this.findStaffUsers()
-			console.log(this.state.user)
+				this.render()
+				console.log(findUser.data.user)
 			}
 	componentDidMount() {
 		this.findSupervisors()
@@ -132,9 +153,7 @@ class Profile extends React.Component {
 					<InputGroup.Text>First and Last name</InputGroup.Text>
 					<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
 					readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
-						let setSubState = this.state.user
-						this.state.user.firstName = e.target.value
-						this.setState({setSubState})}}/>
+						this.state.user.firstName = e.target.value}}/>
 						<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
 							let setSubState = this.state.user
 							this.state.user.lastName = e.target.value
@@ -151,10 +170,9 @@ class Profile extends React.Component {
 							name="userName"
 							value={this.state.user.userName}
 							onChange={(e) => {
-								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
 								this.state.user.email = `${e.target.value}${localStorage.emailService}`
-								this.setState({setSubState})}}
+								}}
 								/>
 								<InputGroup.Text id="basic-addon2">{localStorage.emailService}</InputGroup.Text>
 								</InputGroup>
@@ -163,9 +181,8 @@ class Profile extends React.Component {
 								<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
 								<Form.Label>Password</Form.Label>
 								<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
-									let setSubState = this.state.user
 									this.state.user.password = e.target.value
-									this.setState({setSubState})}}/>
+									}}/>
 									<Form.Text className="text-muted">
 									Your password is not encrypted
 									</Form.Text>
@@ -173,12 +190,12 @@ class Profile extends React.Component {
 									<Container>
 									<Row>
 									<Col>
-									<fieldset>
+									<fieldset >
 									<Form.Group as={Row} className="mb-3">
 									<Form.Label>
 									Permission Level
 									</Form.Label>
-									<Col sm={10}>
+									<Col sm={10} >
 
 									<Form.Check
 									type="radio"
@@ -186,68 +203,64 @@ class Profile extends React.Component {
 									name="permission"
 									id="formHorizontalRadios1"
 									value='A'
-									defaultChecked={this.state.user.accessLevel == 'A'}
+									checked={this.state.user.storedAccess == 'A'}
 									disabled={localStorage.storedAccess < 'C'}
 									onClick={(e) => {
-										let setSubState = this.state.user
-										this.state.user.accessLevel = e.target.value
-										this.setState({setSubState})
+										this.handlePermission(e)
+										console.log(e.target.value)
 										console.log(this.state.user)}}
+
 										/>
 										<Form.Check
 										type="radio"
 										label="View Only"
 										name="permission"
-										id="formHorizontalRadios2"
+										id="formHorizontalRadios1"
 										value='B'
-										defaultChecked={this.state.user.accessLevel == 'B'}
+										checked={this.state.user.storedAccess == 'B'}
 										disabled={localStorage.storedAccess < 'C'}
 										onClick={(e) => {
-											let setSubState = this.state.user
-											this.state.user.accessLevel = e.target.value
-											this.setState({setSubState})
+											this.handlePermission(e)
+											console.log(e.target.value)
 											console.log(this.state.user)}}
 											/>
 											<Form.Check
 											type="radio"
 											label="Storeperson"
 											name="permission"
-											id="formHorizontalRadios3"
+											id="formHorizontalRadios1"
 											value='C'
-											defaultChecked={this.state.user.accessLevel == 'C'}
+											checked={this.state.user.storedAccess == 'C'}
 											disabled={localStorage.storedAccess < 'C'}
 											onClick={(e) => {
-												let setSubState = this.state.user
-												this.state.user.accessLevel = e.target.value
-												this.setState({setSubState})
+												this.handlePermission(e)
+												console.log(e.target.value)
 												console.log(this.state.user)}}
 												/>
 												<Form.Check
 												type="radio"
 												label="Supervisor"
 												name="permission"
-												id="formHorizontalRadios4"
+												id="formHorizontalRadios1"
 												value='D'
-												defaultChecked={this.state.user.accessLevel == 'D'}
+												checked={this.state.user.storedAccess === 'D'}
 												disabled={localStorage.storedAccess < 'D'}
 												onClick={(e) => {
-													let setSubState = this.state.user
-													this.state.user.accessLevel = e.target.value
-													this.setState({setSubState})
+													this.handlePermission(e)
+													console.log(e.target.value)
 													console.log(this.state.user)}}
 													/>
 													<Form.Check
 													type="radio"
 													label="Full Admin"
 													name="permission"
-													id="formHorizontalRadios5"
+													id="formHorizontalRadios1"
 													value='Z'
 													disabled={localStorage.storedAccess !== 'Z'}
-													defaultChecked={this.state.user.accessLevel == 'Z'}
+													checked={this.state.user.storedAccess === 'Z'}
 													onClick={(e) => {
-														let setSubState = this.state.user
-														this.state.user.accessLevel = e.target.value
-														this.setState({setSubState})
+														this.handlePermission(e)
+														console.log(e.target.value)
 														console.log(this.state.user)}}
 														/>
 														</Col>
@@ -262,11 +275,9 @@ class Profile extends React.Component {
 														{this.state.supervisors.map((user, i) => (
 															<Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
 															value={user._id}
-															defaultChecked={this.state.user.userSupervisor == user._id}
+															defaultChecked={this.state.user.userSupervisor = user._id}
 															onClick={(e) => {
-																let setSubState = this.state.user
 																this.state.user.userSupervisor = e.target.value
-																this.setState({setSubState})
 																console.log(this.state.user)
 															}}
 															/>
@@ -299,6 +310,7 @@ class Profile extends React.Component {
 								{this.state.staffUsers.map((user, i) => (
 								<Card key={i} value={user._id} name="staffMember" onClick={(e) => {
 									console.log('CLICKED')
+									console.log(user)
 									e.preventDefault()
 									this.findUser(user)
 								}
