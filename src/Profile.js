@@ -15,6 +15,8 @@ import Alert from 'react-bootstrap/Alert'
 
 class Profile extends React.Component {
   state = {
+		changeType: 'Your Profile',
+		errorMessage: null,
 		canUpdate: localStorage.storedAccess > 'C' ? false : true,
 		addOrUpdate: false,
 		user: {
@@ -135,6 +137,7 @@ class Profile extends React.Component {
 			}
 	addNewUser = async () => {
 		console.log('ADD NEW USER START')
+		this.setState({changeType: 'Add New User'})
 
 		let setSubState = this.state.user
 		setSubState.id = null
@@ -147,9 +150,9 @@ class Profile extends React.Component {
 		setSubState.userSupervisor = localStorage.userId
 		setSubState.userFullName = null
 		this.setState({setSubState})
-		console.log(setSubState)
 		this.findSupervisors()
 		this.render()
+		console.log(setSubState)
 	}
 	componentDidMount() {
 		this.findSupervisors()
@@ -157,20 +160,25 @@ class Profile extends React.Component {
 	}
   render() {
 		console.log(this.state)
+		let canAddUser = false
+		if (this.state.user.firstName == "First Name" || this.state.user.lastName == "Last Name" || this.state.user.userName == "Email User Name" || this.state.user.password == "1234") {
+			canAddUser = false
+
+		} else canAddUser = true
+		console.log(canAddUser)
 		let addOrUpdateButton
 		let addNewUserButton
-		if (this.state.addOrUpdate == true || null) {
+		if (this.state.addOrUpdate == true || this.state.addOrUpdate == null || canAddUser == true) {
 			addOrUpdateButton = <Button type="submit" variant="danger" >Create New User. Email will be sent</Button>
-		} else {
+		} else if (canAddUser == true) {
 			addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
 		}
 		if (localStorage.storedAccess >= 'D') {
-			addNewUserButton = <Button type="submit" variant="danger" onClick={(e) => {
+			addNewUserButton = <Button type="submit" variant="warning" onClick={(e) => {
 				console.log('Add User Clicked')
 				e.preventDefault()
 				this.addNewUser()
-				this.setState({addOrUpdate: true})
-			}}>Create New User. Email will be sent</Button>
+			}}>Add New User. Email will be sent</Button>
 		} else {
 
 		}
@@ -185,7 +193,7 @@ class Profile extends React.Component {
       <Row>
         <Col>
 						<Card style={{ width: '35rem' }} className="m-3">
-						<Card.Header as="h5">Profile</Card.Header>
+						<Card.Header as="h5">{this.state.changeType}</Card.Header>
 						<Form onSubmit={(e) => {
 							e.preventDefault()
 							this.updateUser(this.state.user, e)
@@ -360,6 +368,7 @@ class Profile extends React.Component {
 								<Card key={i} value={user._id} name="staffMember" onClick={(e) => {
 									console.log('CLICKED')
 									console.log(user)
+									this.setState({changeType: 'Staff User Update'})
 									e.preventDefault()
 									this.findUser(user)
 								}
