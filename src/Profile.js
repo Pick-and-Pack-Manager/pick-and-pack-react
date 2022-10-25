@@ -16,6 +16,7 @@ import Alert from 'react-bootstrap/Alert'
 class Profile extends React.Component {
   state = {
 		canUpdate: localStorage.storedAccess > 'C' ? false : true,
+		addOrUpdate: false,
 		user: {
 			id: localStorage.userId,
 			firstName: localStorage.userFirstName,
@@ -155,7 +156,26 @@ class Profile extends React.Component {
 		this.findStaffUsers()
 	}
   render() {
+		console.log(this.state)
+		let addOrUpdateButton
+		let addNewUserButton
+		if (this.state.addOrUpdate == true || null) {
+			addOrUpdateButton = <Button type="submit" variant="danger" >Create New User. Email will be sent</Button>
+		} else {
+			addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
+		}
+		if (localStorage.storedAccess >= 'D') {
+			addNewUserButton = <Button type="submit" variant="danger" onClick={(e) => {
+				console.log('Add User Clicked')
+				e.preventDefault()
+				this.addNewUser()
+				this.setState({addOrUpdate: true})
+			}}>Create New User. Email will be sent</Button>
+		} else {
 
+		}
+
+    return (
 			localStorage.storedAccess >= 'B' ?
 			<>
 			{/*NAVIGATION SECTION*/}
