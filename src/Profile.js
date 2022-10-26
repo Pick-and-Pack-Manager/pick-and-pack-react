@@ -12,6 +12,8 @@ import Card from 'react-bootstrap/Card'
 import InputGroup from 'react-bootstrap/InputGroup';
 import ListGroup from 'react-bootstrap/ListGroup';
 import Alert from 'react-bootstrap/Alert'
+import Accordion from 'react-bootstrap/Accordion'
+import Table from "react-bootstrap/Table"
 
 class Profile extends React.Component {
   state = {
@@ -211,7 +213,7 @@ class Profile extends React.Component {
 			warningMessage = <Alert key='danger' variant='danger'>New Users need all details completed. Please ensure correctly filled out. Then Button to add new user will show</Alert>
 		} else addOrUpdateButton = <Button type="submit" variant="primary" type="submit">Save Changes</Button>
 		if (localStorage.storedAccess >= 'D') {
-			addNewUserButton = <Button type="submit" variant="warning" onClick={(e) => {
+			addNewUserButton = <Button type="submit" variant="warning" className="m-3" onClick={(e) => {
 				console.log('Add New User Clicked')
 				e.preventDefault()
 				this.addNewUserStart()
@@ -231,7 +233,7 @@ class Profile extends React.Component {
 			<Container>
       <Row>
         <Col>
-						<Card style={{ width: '35rem' }} className="m-3">
+						<Card style={{ width: '40rem' }} className="m-3">
 						<Card.Header as="h5">{this.state.changeType}</Card.Header>
 						{warningMessage}
 						{successMessagePopup}
@@ -241,7 +243,7 @@ class Profile extends React.Component {
 							this.updateUser(this.state.user, e)
 						}
 					}>
-					<InputGroup className="mb-3" >
+					<InputGroup className="p-1" >
 					<InputGroup.Text>First and Last name</InputGroup.Text>
 					<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
 					readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
@@ -255,7 +257,7 @@ class Profile extends React.Component {
 							this.setState({setSubState})}
 						}/>
 							</InputGroup>
-							<Form.Group className="mb-3" controlId="formBasicEmail" style={{ width: '30rem' }}>
+							<Form.Group className="mb-3 p-1" controlId="formBasicEmail" style={{ width: '30rem' }}>
 							<Form.Label>Email address</Form.Label>
 							<InputGroup className="mb-3">
 							<Form.Control
@@ -276,7 +278,7 @@ class Profile extends React.Component {
 								</InputGroup>
 								</Form.Group>
 
-								<Form.Group className="mb-3" controlId="formBasicPassword" style={{ width: '30rem' }}>
+								<Form.Group className="mb-3 p-1" controlId="formBasicPassword" style={{ width: '30rem' }}>
 								<Form.Label>Password</Form.Label>
 								<Form.Control type="password" name="password" value={this.state.user.password} placeholder="Password" onChange={(e) => {
 									let setSubState = this.state.user
@@ -291,11 +293,11 @@ class Profile extends React.Component {
 									<Row>
 									<Col>
 									<fieldset >
-									<Form.Group as={Row} className="mb-3">
+									<Form.Group as={Row} className="m-2 p-1">
 									<Form.Label>
 									Permission Level
 									</Form.Label>
-									<Col sm={10} >
+									<Col >
 
 									<Form.Check
 									type="radio"
@@ -368,14 +370,15 @@ class Profile extends React.Component {
 														</fieldset>
 														</Col>
 														<Col>
-														<Form.Group as={Row} className="mb-3">
+														<Form.Group as={Row} className="mb-2 p-1">
 														<Form.Label>
 														Supervisor
 														</Form.Label>
 														{this.state.supervisors.map((user, i) => (
-															<Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.email}`} name="supervisor"
+															<Form.Check key={i} type="radio" id={`formHorizontalRadios${i+10}`} label={`${user.firstName} ${user.lastName}`} name="supervisor"
 															value={user._id}
 															checked={this.state.user.userSupervisor === user._id}
+															disabled={localStorage.storedAccess < 'D'}
 															onClick={(e) => {
 																this.handleSupervisorChange(e)
 																console.log(this.state.user)
@@ -383,31 +386,406 @@ class Profile extends React.Component {
 															/>
 														))}
 														</Form.Group>
-
 														</Col>
+
+														</Row>
+														<Row className="m-2 p-1">
+														<Accordion className="m-1 p-1">
+												      <Accordion.Item eventKey="0">
+												        <Accordion.Header>Kitting Permissions</Accordion.Header>
+												        <Accordion.Body>
+																<Table striped bordered hover size="sm" className="m-1">
+																 {/*TABLE HEAD AND COLUMNS DEFINITION*/}
+																 <thead size="sm">
+																	 <tr >
+																		 <th>Domestic Kitting</th>
+																		 <th>Commercial Kitting</th>
+																		 <th>USA Kitting</th>
+																	 </tr>
+																 </thead>
+																 <tbody size="sm">
+																		 <tr>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can View"
+																				 name="DomKitPerm"
+																				 value='1'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can View"
+																				 name="ComKitPerm"
+																				 value='1'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can View"
+																				 name="USAKitPerm"
+																				 value='1'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																		 </tr>
+																		 <tr>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Create Packages"
+																				 name="DomKitPerm"
+																				 value='2'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Create Packages"
+																				 name="ComKitPerm"
+																				 value='2'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Create Packages"
+																				 name="USAKitPerm"
+																				 value='2'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																		 </tr>
+																		 <tr>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can Pick"
+																				 name="DomKitPerm"
+																				 value='3'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can Pick"
+																				 name="ComKitPerm"
+																				 value='3'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Can Pick"
+																				 name="USAKitPerm"
+																				 value='3'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																		 </tr>
+																		 <tr>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Mark Complete"
+																				 name="DomKitPerm"
+																				 value='4'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Mark Complete"
+																				 name="ComKitPerm"
+																				 value='4'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																			 <td>
+																				 <Form.Check
+																				 type="checkBox"
+																				 label="Mark Complete"
+																				 name="USAKitPerm"
+																				 value='4'
+																				 disabled={localStorage.storedAccess < 'C'}
+																					 />
+																			 </td>
+																		 </tr>
+																 </tbody>
+															 </Table>
+												        </Accordion.Body>
+																</Accordion.Item>
+															</Accordion>
+
+															<Accordion className="m-1 p-1">
+													      <Accordion.Item eventKey="0">
+													        <Accordion.Header>Completing Permissions</Accordion.Header>
+													        <Accordion.Body>
+																	<Table striped bordered hover size="sm" className="m-1">
+																	 {/*TABLE HEAD AND COLUMNS DEFINITION*/}
+																	 <thead size="sm">
+																		 <tr >
+																			 <th>Domestic Completing</th>
+																			 <th>Commercial Completing</th>
+																			 <th>USA Completing</th>
+																		 </tr>
+																	 </thead>
+																	 <tbody size="sm">
+																			 <tr>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can View"
+																					 name="DomComPerm"
+																					 value='1'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can View"
+																					 name="ComComPerm"
+																					 value='1'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can View"
+																					 name="USAComPerm"
+																					 value='1'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																			 </tr>
+																			 <tr>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Create Packages"
+																					 name="DomComPerm"
+																					 value='2'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Create Packages"
+																					 name="ComComPerm"
+																					 value='2'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Create Packages"
+																					 name="USAComPerm"
+																					 value='2'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																			 </tr>
+																			 <tr>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can Pick"
+																					 name="DomComPerm"
+																					 value='3'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can Pick"
+																					 name="ComComPerm"
+																					 value='3'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Can Pick"
+																					 name="USAComPerm"
+																					 value='3'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																			 </tr>
+																			 <tr>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Mark Complete"
+																					 name="DomComPerm"
+																					 value='4'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Mark Complete"
+																					 name="ComComPerm"
+																					 value='4'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																				 <td>
+																					 <Form.Check
+																					 type="checkBox"
+																					 label="Mark Complete"
+																					 name="USAComPerm"
+																					 value='4'
+																					 disabled={localStorage.storedAccess < 'C'}
+																						 />
+																				 </td>
+																			 </tr>
+																	 </tbody>
+																 </Table>
+													        </Accordion.Body>
+																	</Accordion.Item>
+																</Accordion>
+
+																<Accordion className="m-1 p-1">
+																	<Accordion.Item eventKey="0">
+																		<Accordion.Header>Despatch Permissions</Accordion.Header>
+																		<Accordion.Body>
+																		<Table striped bordered hover size="sm" className="m-1">
+																		 {/*TABLE HEAD AND COLUMNS DEFINITION*/}
+																		 <thead size="sm">
+																			 <tr >
+																				 <th>Yard Despatch</th>
+																				 <th>Container Despatch</th>
+																			 </tr>
+																		 </thead>
+																		 <tbody size="sm">
+																				 <tr>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Can View"
+																						 name="YardDespPerm"
+																						 value='1'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Can View"
+																						 name="ConDespPerm"
+																						 value='1'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																				 </tr>
+																				 <tr>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Create Packages"
+																						 name="YardDespPerm"
+																						 value='2'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Create Packages"
+																						 name="ConDespPerm"
+																						 value='2'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																				 </tr>
+																				 <tr>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Can Pick"
+																						 name="YardDespPerm"
+																						 value='3'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Can Pick"
+																						 name="ConDespPerm"
+																						 value='3'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																				 </tr>
+																				 <tr>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Mark Complete"
+																						 name="YardDespPerm"
+																						 value='4'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																					 <td>
+																						 <Form.Check
+																						 type="checkBox"
+																						 label="Mark Complete"
+																						 name="ConDespPerm"
+																						 value='4'
+																						 disabled={localStorage.storedAccess < 'C'}
+																							 />
+																					 </td>
+																				 </tr>
+																		 </tbody>
+																	 </Table>
+																		</Accordion.Body>
+																		</Accordion.Item>
+																	</Accordion>
+														</Row>
+														<Row>
+															<Form.Group as={Row}>
+															<Col sm={{offset: 4 }} className="mb-1">
+															{addOrUpdateButton}
+															</Col>
+															</Form.Group>
 														</Row>
 														</Container>
-														<Form.Group as={Row}>
-														<Col sm={{ span: 10, offset: 2 }}>
-														{addOrUpdateButton}
-														</Col>
-														</Form.Group>
+
 														</Form>
 														</Card>
 
 				</Col>
         <Col>
 				<Card style={{ width: '20rem' }} className="m-3">
-					<Card.Header as="h5">Select Staff</Card.Header>
+					<Card.Header as="h5">Select Staff to View Profile</Card.Header>
 						<Form>
 							{addNewUserButton}
-						<Form.Group as={Row} className="mb-3">
+						<Form.Group as={Row} className="m-1 p-1">
 						<Container>
 							<Form.Label>
 							Staff to update where you are Supervisor
 							</Form.Label>
 								{this.state.staffUsers.map((user, i) => (
-								<Card key={i} value={user._id} name="staffMember" onClick={(e) => {
+								<Card key={i} value={user._id} name="staffMember" className="m-1" onClick={(e) => {
 									console.log('CLICKED')
 									console.log(user)
 									this.setState({changeType: 'Staff User Update'})
@@ -421,7 +799,7 @@ class Profile extends React.Component {
 										<Card.Text>
 											{`Permission Level ${user.permission}`}
 										</Card.Text>
-										<Button variant="primary" type="submit" >Update User</Button>
+										<Button variant="primary" type="submit" >View User</Button>
 									</Card.Body>
 								</Card>
 							))}
