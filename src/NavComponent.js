@@ -15,11 +15,11 @@ class Nav extends React.Component {
   render() {
     return (
       <nav className="logIn">
-        <div className="container text-center py-3">
+        <div className="container text-center p-3">
           <div className="row">
             {/*- COLUMA 1 NAV - LOGO -->*/}
             <div className="col" align="left">
-              <a className="navbar-brand" href="/houses">
+              <a className="navbar-brand" href="/orders">
                 <img src="logo.jpeg" alt="" height="100px" />
               </a>
             </div>
@@ -27,9 +27,9 @@ class Nav extends React.Component {
 
             {/*- COL 2 NAV - PROFILE AND LOG IN -->*/}
             <div className="col" align="right">
-              <a className="btn btn-outline-secondary" href="/profile">{localStorage.userFullName}</a>
+              <a className="btn btn-outline-secondary m-2" href="/profile">{localStorage.userFullName}</a>
 
-              <Button variant="primary" type="submit" onClick={(e) => {
+              <Button variant="primary" type="submit" className="m-2" onClick={(e) => {
 								// e.preventDefault();
 								this.logOut()
 							}
