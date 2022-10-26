@@ -1,242 +1,139 @@
 import React from "react";
 import "./App.css";
+import axios from "axios";
 import Nav from "./NavComponent.js";
 import Table from "react-bootstrap/Table";
+import Accordion from 'react-bootstrap/Accordion'
+import Container from 'react-bootstrap/Container'
 import {BrowserRouter, Switch, Route, Redirect, Link} from "react-router-dom";
+import Tab from 'react-bootstrap/Tab';
+import Tabs from 'react-bootstrap/Tabs';
 
 class Orders extends React.Component {
   state = {
-    orders: [
-      {
-        docNum: 1,
-        docDueDate: 2,
-        kittingDate: "10-10-2022",
-        completingDate: 4,
-        Customer: {
-          CardName: 5,
-        },
-        orderComments: 6,
-        orderCategory: "C",
-        Lines: [1, 2, 3],
-      },
-      {
-        docNum: 1,
-        docDueDate: 2,
-        kittingDate: 10000,
-        completingDate: 4,
-        Customer: {
-          CardName: 5,
-        },
-        orderComments: 6,
-        orderCategory: "D",
-        Lines: [1, 2, 3],
-      },
-    ],
-    ordersOriginal: [
-      {
-        docNum: 1,
-        docDueDate: 2,
-        kittingDate: 3,
-        completingDate: 4,
-        Customer: {
-          CardName: 5,
-        },
-        orderComments: 6,
-        orderCategory: "C",
-        Lines: [1, 2, 3],
-      },
-      {
-        docNum: 1,
-        docDueDate: 2,
-        kittingDate: 10000,
-        completingDate: 4,
-        Customer: {
-          CardName: 5,
-        },
-        orderComments: 6,
-        orderCategory: "D",
-        Lines: [1, 2, 3],
-      },
-    ],
-		loggedIn: this.props.loggedIn
-  };
-  // AT THE MOUNT WE CREATE ORDERS AND ORIGINAL ORDERS IN THE STATE
-  // {/*componentWillMount() {
-  //   this.setState({
-  //     orders: this.props.orders,
-  //     ordersOriginal: this.props.orders,
-  //   });
-  // }*/}
-
-  // METHODS THAT SET THE STATE TO THE FILTER SELECTION, SO WHEN YOU COME BACK IN THIS WEBSITE, YOU HAVE THE TABLE FILTERED.
-  filterByInitialDate = (e) => {
-    let orders = this.state.orders;
-    let initialDateFilter = orders.filter((order) => order.kittingDate >= e);
-    this.setState({
-      orders: initialDateFilter,
-    });
-  };
-  filterByFinalDate = (e) => {
-    this.setState({
-      finalDate: e.target.value,
-    });
-  };
-  // THIS FILTER BY TYPE YOU HAVE TO BACK TO ALL TO SEARCH AGAIN. NEED TO FIX THIS BUG
-  filterByOrderCategory = (e) => {
-    if (e === "All") {
-      this.setState({
-        orders: this.state.ordersOriginal,
-      });
-    } else {
-      let orders = this.state.orders;
-      let orderCategoryFilter = orders.filter(
-        (order) => order.orderCategory == e
-      );
-      this.setState({
-        orders: orderCategoryFilter,
-      });
-    }
-  };
+		pickingRoute: "DOM01",
+		selectedDespDate: null,
+		selectedCompDate: null,
+		selectedKitDate: null,
+		selectedCustomer: null,
+		orders: []
+	}
+	getOpenOrders = async (findOrders) => {
+		let orders = await axios.get(`http://localhost:4420/orders`,
+			{findOrders}, {withCredentials: true})
+			// let filteredOrders = orders.data.filter(order => order)
+			let filteredOrders = orders
+			console.log(filteredOrders)
+			this.setState({
+					orders: filteredOrders.data
+			})
+	}
+	componentDidMount() {
+		this.getOpenOrders()
+	}
 
   render() {
-		console.log(localStorage)
-    return (
-			localStorage.storedAccess > 'A' ?
-      <>
-        {/*NAVIGATION SECTION*/}
-        <Nav />
-        {/*FILTERS SECTION - ITS MISSING THE ICONS*/}
-        <section className="bg-light">
-          <div className="container text-center bg-light py-3">
-            <form method="get" action="/houses">
-              <div className="row">
-                {/* INITIAL DATE FILTER*/}
-                <div className="col">
-                  <div className="input-group flex-nowrap">
-                    <input
-                      type="date"
-                      className="form-control"
-                      placeholder="Initial date"
-                      name="InitialDateFilter"
-                      onChange={(e) => this.filterByInitialDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-                {/*END OF FILTER*/}
-                {/* FINAL DATE FILTER*/}
-                <div className="col">
-                  <div className="input-group flex-nowrap">
-                    <input
-                      type="date"
-                      className="form-control"
-                      placeholder="Final date"
-                      name="FinalDateFilter"
-                      onChange={(e) => this.filterByFinalDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-                {/*END OF FILTER*/}
-                {/* KITTING DATE FILTER*/}
-                <div className="col">
-                  <div className="input-group">
-                    <label className="input-group-text">Category</label>
-                    <select
-                      className="form-control"
-                      name="CategoryOrKittingRoute"
-                      onChange={(e) =>
-                        this.filterByOrderCategory(e.target.value)
-                      }
-                    >
-                      <option value="All">All</option>
-                      <option value="D">D</option>
-                      <option value="C">C</option>
-                    </select>
-                  </div>
-                </div>
-                {/*Fin del filtro*/}
-                {/*FILTER BUTTON*/}
-                <div className="col">
-                  <button className="btn btn-success">Filter</button>
-                </div>
-                {/*End of Filter Button*/}
-              </div>
-            </form>
-          </div>
-        </section>
-        {/*TABLE SECTION*/}
-        <div className="container mt-5">
-          <Table striped bordered hover>
-            {/*TABLE HEAD AND COLUMNS DEFINITION*/}
-            <thead>
-              <tr>
-                <th>docNum</th>
-                <th>docDueDate</th>
-                <th>kittingDate</th>
-                <th>completingDate</th>
-                <th>Customer.CardName</th>
-                <th>orderComments</th>
-                <th>orderCategory</th>
-                <th>Lines</th>
-                <th>Min</th>
-              </tr>
-            </thead>
-            <tbody>
-              {this.state.orders.map((order, index) => (
-                <tr key={index}>
-                  <td>
-										<Link to="/packing/order/{{this.state.order.docNum}}`">{order.docNum}</Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.docDueDate}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.kittingDate}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.completingDate}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.Customer.CardName}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.orderComments}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.orderCategory}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {order.Lines.length}
-                    </Link>
-                  </td>
-                  <td>
-                    <Link to="/packing/order/{{this.props.order.id}}">
-                      {" "}
-                      {order.Lines.length * 0.75}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        </div>
-      </>
-			:
-			<Redirect to="/" />
-    );
-  }
+		return (
+				localStorage.storedAccess >= 'B' ?
+				<>
+					<Nav />
+					{/*PAGE SELECTION*/}
+					<Tabs
+			      defaultActiveKey="home"
+			      transition={false}
+			      id="noanim-tab-example"
+			      className="mb-1"
+			    >
+			      <Tab eventKey="KIT01" title="Domestic Kitting">
+
+			      </Tab>
+			      <Tab eventKey="KIT02" title="Commercial Kitting">
+
+			      </Tab>
+			      <Tab eventKey="KIT03" title="USA Kitting">
+
+			      </Tab>
+						<Tab eventKey="COMP01" title="Domestic Completing">
+
+						</Tab>
+						<Tab eventKey="COMP02" title="Commercial Completing">
+
+						</Tab>
+						<Tab eventKey="COMP03" title="USA Completing">
+
+						</Tab>
+						<Tab eventKey="DESP01" title="Despatch">
+
+						</Tab>
+			    </Tabs>
+					{/*SCHEDULING SECTION*/}
+						<Accordion defaultActiveKey="0">
+							<Accordion.Item eventKey="0">
+								<Accordion.Header>Scheduling Charts</Accordion.Header>
+								<Accordion.Body>
+								</Accordion.Body>
+								</Accordion.Item>
+						</Accordion>
+					{/*FILTER SECTION*/}
+						<div>
+						</div>
+					{/*HEADER SECTION*/}
+					{/*ORDER SECTION*/}
+						<Accordion defaultActiveKey="1">
+							{this.state.orders.map((order, i) => (
+								<Accordion.Item eventKey={i} key={i}>
+									<Accordion.Header>
+									<Table striped bordered hover size="sm">
+										<thead>
+											<tr>
+												<th width='1'>Order Number</th>
+												<th width='1'>Despatch Date</th>
+												<th width='1'>Completing Date</th>
+												<th width='1'>Kitting Date</th>
+												<th width='3'>Customer</th>
+												<th width='1'>Order Lines</th>
+												<th width='1'>Lines Kitted</th>
+												<th width='1'>Minutes</th>
+											</tr>
+										</thead>
+										<tbody>
+											<tr>
+												<td>{order.docNum}</td>
+												<td>{order.docDueDate}</td>
+												<td>{order.kittingDate}</td>
+												<td>{order.kittingDate}</td>
+												<td>{order.customer.cardName}</td>
+												<td>30 Lines</td>
+												<td>0 Kitted</td>
+												<td>45 mins</td>
+											</tr>
+										</tbody>
+									</Table>
+									</Accordion.Header>
+									<Accordion.Body>
+										{order.orderItems.map((line, i) => (
+											<Table striped bordered hover size="sm" variant="dark">
+												<thead>
+													<tr>
+														<th width='1'>ItemCode</th>
+													</tr>
+												</thead>
+												<tbody>
+													<tr>
+														<td>{line.itemCode}</td>
+													</tr>
+												</tbody>
+											</Table>
+										))}
+									</Accordion.Body>
+								</Accordion.Item>
+							))}
+						</Accordion>
+				</>
+				: <Redirect to="/" />
+		)
+	}
+
 }
 
 export default Orders;

@@ -227,9 +227,7 @@ class Profile extends React.Component {
     return (
 			localStorage.storedAccess >= 'B' ?
 			<>
-			{/*NAVIGATION SECTION*/}
 			<Nav />
-			{/*FILTERS SECTION - ITS MISSING THE ICONS*/}
 			<Container>
       <Row>
         <Col>
