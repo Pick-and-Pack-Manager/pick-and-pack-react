@@ -785,7 +785,7 @@ class Profile extends React.Component {
 							Staff to update where you are Supervisor
 							</Form.Label>
 								{this.state.staffUsers.map((user, i) => (
-								<Card key={i} value={user._id} name="staffMember" className="m-1" onClick={(e) => {
+								<Card key={i} value={user._id} name="staffMember" className="m-1 mb-3" onClick={(e) => {
 									console.log('CLICKED')
 									console.log(user)
 									this.setState({changeType: 'Staff User Update'})
