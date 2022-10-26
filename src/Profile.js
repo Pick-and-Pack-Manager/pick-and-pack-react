@@ -17,6 +17,7 @@ class Profile extends React.Component {
   state = {
 		changeType: 'Your Profile',
 		errorMessage: null,
+		successMessage: null,
 		canUpdate: localStorage.storedAccess > 'C' ? false : true,
 		addOrUpdate: false,
 		user: {
@@ -128,8 +129,8 @@ class Profile extends React.Component {
 					setSubState.storedAccess = findUser.data.user.permission
 					setSubState.userSupervisor = findUser.data.user.userSupervisor
 					setSubState.userFullName = fullName
-				console.log(this.state)
 				this.setState({setSubState})
+				console.log(this.state)
 				this.findSupervisors()
 				this.findStaffUsers()
 				this.render()
@@ -159,20 +160,23 @@ class Profile extends React.Component {
 		console.log(user)
 			let addUser = await axios.post(`http://localhost:4420/users/addnewuser`, {user}, {withCredentials: true})
 				console.log(addUser)
-				let fullName = await addUser.data.firstName + ' ' +  await addUser.data.lastName
+				let fullName = await addUser.data.returnData.newUser.firstName + ' ' +  await addUser.data.returnData.newUser.lastName
 				let setSubState = this.state.user
-				setSubState.id = addUser.data._id
+				setSubState.id = addUser.data.returnData.newUser._id
 				setSubState.userFullName = fullName
-				setSubState.firstName = addUser.data.firstName
-				setSubState.lastName = addUser.data.lastName
-				setSubState.email = addUser.data.email
-				setSubState.userName = addUser.data.userName
-				setSubState.password = addUser.data.password
-				setSubState.storedAccess = addUser.data.storedAccess
-				setSubState.userSupervisor = addUser.data.supervisor
+				setSubState.firstName = addUser.data.returnData.newUser.firstName
+				setSubState.lastName = addUser.data.returnData.newUser.lastName
+				setSubState.email = addUser.data.returnData.newUser.email
+				setSubState.userName = addUser.data.returnData.newUser.userName
+				setSubState.password = addUser.data.returnData.newUser.password
+				setSubState.storedAccess = addUser.data.returnData.newUser.storedAccess
+				setSubState.userSupervisor = addUser.data.returnData.newUser.supervisor
 				this.setState({setSubState})
 				this.setState({changeType: 'New User Profile'})
 				this.setState({addOrUpdate: false})
+				this.setState({successMessage: addUser.data.returnData.successMessage})
+				this.setState({errorMessage: addUser.data.errorMessage})
+				console.log(this.state)
 				this.render()
 
 }
@@ -212,9 +216,11 @@ class Profile extends React.Component {
 				e.preventDefault()
 				this.addNewUserStart()
 			}}>Add New User. Email will be sent</Button>
-		} else {
-
 		}
+		let successMessagePopup
+		let errorMessagePopup
+		if (this.state.successMessage == null || this.state.successMessage == undefined ) {successMessagePopup = <></>} else successMessagePopup = <Alert key='success' variant='success'>{this.state.successMessage}</Alert>
+		if (this.state.errorMessage == null || this.state.errorMessage == undefined ) {errorMessagePopup = <></>} else errorMessagePopup = <Alert key='danger' variant='danger'>{this.state.errorMessage}</Alert>
 
     return (
 			localStorage.storedAccess >= 'B' ?
@@ -228,6 +234,8 @@ class Profile extends React.Component {
 						<Card style={{ width: '35rem' }} className="m-3">
 						<Card.Header as="h5">{this.state.changeType}</Card.Header>
 						{warningMessage}
+						{successMessagePopup}
+						{errorMessagePopup}
 						<Form onSubmit={(e) => {
 							e.preventDefault()
 							this.updateUser(this.state.user, e)
