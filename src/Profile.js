@@ -244,12 +244,12 @@ class Profile extends React.Component {
 					<InputGroup className="p-1" >
 					<InputGroup.Text>First and Last name</InputGroup.Text>
 					<Form.Control aria-label="First name" value={this.state.user.firstName} placeholder="First Name"
-					readOnly={this.state.canUpdate} name="firstName" onChange={(e) => {
+					readOnly={this.state.canUpdate} name="firstName" disabled={localStorage.storedAccess <= 'C'} onChange={(e) => {
 						let setSubState = this.state.user
 						this.state.user.firstName = e.target.value
 						this.setState({setSubState})
 					}}/>
-						<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName" onChange={(e) => {
+						<Form.Control aria-label="Last name" value={this.state.user.lastName} placeholder="Last Name"  readOnly={this.state.canUpdate} name="lastName"  disabled={localStorage.storedAccess <= 'C'}onChange={(e) => {
 							let setSubState = this.state.user
 							this.state.user.lastName = e.target.value
 							this.setState({setSubState})}
@@ -265,6 +265,7 @@ class Profile extends React.Component {
 							readOnly={this.state.canUpdate}
 							name="userName"
 							value={this.state.user.userName}
+							disabled={localStorage.storedAccess <= 'C'}
 							onChange={(e) => {
 								let setSubState = this.state.user
 								this.state.user.userName = e.target.value
@@ -304,7 +305,7 @@ class Profile extends React.Component {
 									id="formHorizontalRadios1"
 									value='A'
 									checked={this.state.user.storedAccess == 'A'}
-									disabled={localStorage.storedAccess < 'C'}
+									disabled={localStorage.storedAccess <= 'C'}
 									onClick={(e) => {
 										this.handlePermission(e)
 										console.log(e.target.value)
@@ -318,7 +319,7 @@ class Profile extends React.Component {
 										id="formHorizontalRadios1"
 										value='B'
 										checked={this.state.user.storedAccess == 'B'}
-										disabled={localStorage.storedAccess < 'C'}
+										disabled={localStorage.storedAccess <= 'C'}
 										onClick={(e) => {
 											this.handlePermission(e)
 											console.log(e.target.value)
@@ -331,7 +332,7 @@ class Profile extends React.Component {
 											id="formHorizontalRadios1"
 											value='C'
 											checked={this.state.user.storedAccess == 'C'}
-											disabled={localStorage.storedAccess < 'C'}
+											disabled={localStorage.storedAccess <= 'C'}
 											onClick={(e) => {
 												this.handlePermission(e)
 												console.log(e.target.value)
@@ -388,8 +389,8 @@ class Profile extends React.Component {
 
 														</Row>
 														<Row className="m-2 p-1">
-														<Accordion className="m-1 p-1">
-												      <Accordion.Item eventKey="0">
+														<Accordion className="m-1 p-1" >
+												      <Accordion.Item eventKey="0" >
 												        <Accordion.Header>Kitting Permissions</Accordion.Header>
 												        <Accordion.Body>
 																<Table striped bordered hover size="sm" className="m-1">
@@ -409,7 +410,7 @@ class Profile extends React.Component {
 																				 label="Can View"
 																				 name="DomKitPerm"
 																				 value='1'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -418,7 +419,7 @@ class Profile extends React.Component {
 																				 label="Can View"
 																				 name="ComKitPerm"
 																				 value='1'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -427,7 +428,7 @@ class Profile extends React.Component {
 																				 label="Can View"
 																				 name="USAKitPerm"
 																				 value='1'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																		 </tr>
@@ -438,7 +439,7 @@ class Profile extends React.Component {
 																				 label="Create Packages"
 																				 name="DomKitPerm"
 																				 value='2'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -447,7 +448,7 @@ class Profile extends React.Component {
 																				 label="Create Packages"
 																				 name="ComKitPerm"
 																				 value='2'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -456,7 +457,7 @@ class Profile extends React.Component {
 																				 label="Create Packages"
 																				 name="USAKitPerm"
 																				 value='2'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																		 </tr>
@@ -467,7 +468,7 @@ class Profile extends React.Component {
 																				 label="Can Pick"
 																				 name="DomKitPerm"
 																				 value='3'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -476,7 +477,7 @@ class Profile extends React.Component {
 																				 label="Can Pick"
 																				 name="ComKitPerm"
 																				 value='3'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -485,7 +486,7 @@ class Profile extends React.Component {
 																				 label="Can Pick"
 																				 name="USAKitPerm"
 																				 value='3'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																		 </tr>
@@ -496,7 +497,7 @@ class Profile extends React.Component {
 																				 label="Mark Complete"
 																				 name="DomKitPerm"
 																				 value='4'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -505,7 +506,7 @@ class Profile extends React.Component {
 																				 label="Mark Complete"
 																				 name="ComKitPerm"
 																				 value='4'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																			 <td>
@@ -514,7 +515,7 @@ class Profile extends React.Component {
 																				 label="Mark Complete"
 																				 name="USAKitPerm"
 																				 value='4'
-																				 disabled={localStorage.storedAccess < 'C'}
+																				 disabled={localStorage.storedAccess <= 'C'}
 																					 />
 																			 </td>
 																		 </tr>
@@ -545,7 +546,7 @@ class Profile extends React.Component {
 																					 label="Can View"
 																					 name="DomComPerm"
 																					 value='1'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -554,7 +555,7 @@ class Profile extends React.Component {
 																					 label="Can View"
 																					 name="ComComPerm"
 																					 value='1'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -563,7 +564,7 @@ class Profile extends React.Component {
 																					 label="Can View"
 																					 name="USAComPerm"
 																					 value='1'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																			 </tr>
@@ -574,7 +575,7 @@ class Profile extends React.Component {
 																					 label="Create Packages"
 																					 name="DomComPerm"
 																					 value='2'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -583,7 +584,7 @@ class Profile extends React.Component {
 																					 label="Create Packages"
 																					 name="ComComPerm"
 																					 value='2'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -592,7 +593,7 @@ class Profile extends React.Component {
 																					 label="Create Packages"
 																					 name="USAComPerm"
 																					 value='2'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																			 </tr>
@@ -603,7 +604,7 @@ class Profile extends React.Component {
 																					 label="Can Pick"
 																					 name="DomComPerm"
 																					 value='3'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -612,7 +613,7 @@ class Profile extends React.Component {
 																					 label="Can Pick"
 																					 name="ComComPerm"
 																					 value='3'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -621,7 +622,7 @@ class Profile extends React.Component {
 																					 label="Can Pick"
 																					 name="USAComPerm"
 																					 value='3'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																			 </tr>
@@ -632,7 +633,7 @@ class Profile extends React.Component {
 																					 label="Mark Complete"
 																					 name="DomComPerm"
 																					 value='4'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -641,7 +642,7 @@ class Profile extends React.Component {
 																					 label="Mark Complete"
 																					 name="ComComPerm"
 																					 value='4'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																				 <td>
@@ -650,7 +651,7 @@ class Profile extends React.Component {
 																					 label="Mark Complete"
 																					 name="USAComPerm"
 																					 value='4'
-																					 disabled={localStorage.storedAccess < 'C'}
+																					 disabled={localStorage.storedAccess <= 'C'}
 																						 />
 																				 </td>
 																			 </tr>
@@ -680,7 +681,7 @@ class Profile extends React.Component {
 																						 label="Can View"
 																						 name="YardDespPerm"
 																						 value='1'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																					 <td>
@@ -689,7 +690,7 @@ class Profile extends React.Component {
 																						 label="Can View"
 																						 name="ConDespPerm"
 																						 value='1'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																				 </tr>
@@ -700,7 +701,7 @@ class Profile extends React.Component {
 																						 label="Create Packages"
 																						 name="YardDespPerm"
 																						 value='2'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																					 <td>
@@ -709,7 +710,7 @@ class Profile extends React.Component {
 																						 label="Create Packages"
 																						 name="ConDespPerm"
 																						 value='2'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																				 </tr>
@@ -720,7 +721,7 @@ class Profile extends React.Component {
 																						 label="Can Pick"
 																						 name="YardDespPerm"
 																						 value='3'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																					 <td>
@@ -729,7 +730,7 @@ class Profile extends React.Component {
 																						 label="Can Pick"
 																						 name="ConDespPerm"
 																						 value='3'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																				 </tr>
@@ -740,7 +741,7 @@ class Profile extends React.Component {
 																						 label="Mark Complete"
 																						 name="YardDespPerm"
 																						 value='4'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																					 <td>
@@ -749,7 +750,7 @@ class Profile extends React.Component {
 																						 label="Mark Complete"
 																						 name="ConDespPerm"
 																						 value='4'
-																						 disabled={localStorage.storedAccess < 'C'}
+																						 disabled={localStorage.storedAccess <= 'C'}
 																							 />
 																					 </td>
 																				 </tr>
