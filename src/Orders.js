@@ -14,16 +14,24 @@ import Row from 'react-bootstrap/Row';
 
 class Orders extends React.Component {
   state = {
-		pickingRoute: "DOM01",
+		pageTitle: "KIT1 Kitting Schedule",
+		kittingRoute: "KIT1",
+		completingRoute: null,
+		despatchRoute: null,
 		selectedDespDate: null,
 		selectedCompDate: null,
 		selectedKitDate: null,
 		selectedCustomer: null,
 		orders: []
 	}
-	getOpenOrders = async (findOrders) => {
-		let orders = await axios.get(`http://localhost:4420/orders`,
-			{findOrders}, {withCredentials: true})
+	getOpenOrders = async () => {
+		let findOrders = {
+			kittingRoute: this.state.kittingRoute,
+			completingRoute: this.state.completingRoute,
+			despatchRoute: this.state.despatchRoute
+		}
+		let orders = await axios.post(`http://localhost:4420/orders`,
+			findOrders, {withCredentials: true})
 			// let filteredOrders = orders.data.filter(order => order)
 			let filteredOrders = orders
 			console.log(filteredOrders)
@@ -42,33 +50,58 @@ class Orders extends React.Component {
 					<Nav />
 					{/*PAGE SELECTION*/}
 					<Tabs
-			      defaultActiveKey="home"
+			      defaultActiveKey="KIT1"
 			      transition={false}
 			      id="noanim-tab-example"
 			      className="mb-1"
+						onSelect={(e) => {
+							console.log('CLICKED TAB')
+							console.log(e)
+							if (e == "KIT1" || e == "KIT2" || e == "KIT3") {
+								this.state.kittingRoute = e
+								this.state.completingRoute = null
+								this.state.despatchRoute = null
+								this.state.pageTitle = `${e} Kitting Schedule`
+							} else if (e == "COM1" || e == "COM2" || e == "COM3") {
+								this.state.kittingRoute = null
+								this.state.completingRoute = e
+								this.state.despatchRoute = null
+								this.state.pageTitle = `${e} Completing Schedule`
+							} else if (e == "DESP1" || e == "DESP2") {
+								this.state.kittingRoute = null
+								this.state.completingRoute = null
+								this.state.despatchRoute = null
+								this.state.pageTitle = `${e} Despatch Schedule`
+							}
+							console.log(this.state.kittingRoute)
+							console.log(this.state.completingRoute)
+							console.log(this.state.despatchRoute)
+							this.getOpenOrders()
+						}
+					}
 			    >
-			      <Tab eventKey="KIT01" title="Domestic Kitting">
+			      <Tab eventKey="KIT1" title="Domestic Kitting" value="KIT1">
+			      </Tab>
+			      <Tab eventKey="KIT2" title="Commercial Kitting">
 
 			      </Tab>
-			      <Tab eventKey="KIT02" title="Commercial Kitting">
+			      <Tab eventKey="KIT3" title="USA Kitting">
 
 			      </Tab>
-			      <Tab eventKey="KIT03" title="USA Kitting">
-
-			      </Tab>
-						<Tab eventKey="COMP01" title="Domestic Completing">
+						<Tab eventKey="COM1" title="Domestic Completing">
 
 						</Tab>
-						<Tab eventKey="COMP02" title="Commercial Completing">
+						<Tab eventKey="COM2" title="Commercial Completing">
 
 						</Tab>
-						<Tab eventKey="COMP03" title="USA Completing">
+						<Tab eventKey="COM3" title="USA Completing">
 
 						</Tab>
-						<Tab eventKey="DESP01" title="Despatch">
+						<Tab eventKey="DESP1" title="Despatch">
 
 						</Tab>
 			    </Tabs>
+					<h1>{this.state.pageTitle}</h1>
 					{/*SCHEDULING SECTION*/}
 						<Accordion defaultActiveKey="0">
 							<Accordion.Item eventKey="0">
@@ -91,8 +124,10 @@ class Orders extends React.Component {
 											<tr>
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Order Number</th>
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Despatch Date</th>
-												<th style={{width: '100px', margin: '0', padding: '0'}}>Completing Date</th>
+												<th style={{width: '100px', margin: '0', padding: '0'}}>Kitting Route</th>
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Kitting Date</th>
+												<th style={{width: '100px', margin: '0', padding: '0'}}>Completing Route</th>
+												<th style={{width: '100px', margin: '0', padding: '0'}}>Completing Date</th>
 												<th style={{width: '350px', margin: '0', padding: '0'}}>Customer</th>
 												<th style={{width: '80px', margin: '0', padding: '0'}}>Order Lines</th>
 												<th style={{width: '80px', margin: '0', padding: '0'}}>Lines Picked</th>
@@ -102,8 +137,10 @@ class Orders extends React.Component {
 											<tr>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.docNum}</td>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.docDueDate}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.kittingRoute}</td>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.kittingDate}</td>
-												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.kittingDate}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.completingRoute}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.completingDate}</td>
 												<td style={{width: '350px', margin: '0', padding: '0'}}>{order.customer.cardName}</td>
 												<td style={{width: '80px', margin: '0', padding: '0'}}>{order.orderItems.length} Lines</td>
 												<td style={{width: '80px', margin: '0', padding: '0'}}>0 Picked</td>
