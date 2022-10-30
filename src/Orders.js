@@ -59,25 +59,15 @@ class Orders extends React.Component {
 					orders: filteredOrders.data
 			})
 	}
-	updateOrder = async (order, e) => {
+	updateOrder = async (order, ordIndex) => {
 		console.log('UPDATE Order')
+		console.log(ordIndex)
 		console.log(order._id)
 		console.log(order.docNum)
 		console.log(order.orderItems)
-			// let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
-				// console.log(order)
-				let setSubState = this.state.order
-				// setSubState.id = updateUser.data.user.id
-				// setSubState.userFullName = fullName
-				// setSubState.firstName = updateUser.data.user.firstName
-				// setSubState.lastName = updateUser.data.user.lastName
-				// setSubState.email = updateUser.data.user.email
-				// setSubState.userName = updateUser.data.user.userName
-				// setSubState.password = updateUser.data.user.password
-				// setSubState.storedAccess = updateUser.data.user.storedAccess
-				// setSubState.userSupervisor = updateUser.data.user.supervisor
-				// this.setState({setSubState})
-
+			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
+				console.log(updateOrder.data)
+				this.getOpenOrders()
 }
 	componentDidMount() {
 		this.getOpenOrders()
@@ -209,7 +199,7 @@ class Orders extends React.Component {
 												console.log(e.target)
 												console.log(order)
 												e.preventDefault()
-												this.updateOrder(order)
+												this.updateOrder(order, ordIndex)
 											}
 										}>Update Order in SAP</Button>
 											</Col>
