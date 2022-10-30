@@ -11,9 +11,12 @@ import Tabs from 'react-bootstrap/Tabs';
 import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
+import ProgressBar from 'react-bootstrap/ProgressBar';
 
 class Orders extends React.Component {
   state = {
+		scheduleTotalLines: 0,
+		scheduleTotalPicked: 0,
 		pageTitle: "KIT1 Kitting Schedule",
 		kittingRoute: "KIT1",
 		completingRoute: null,
@@ -34,10 +37,28 @@ class Orders extends React.Component {
 			findOrders, {withCredentials: true})
 			// let filteredOrders = orders.data.filter(order => order)
 			let filteredOrders = orders
-			console.log(filteredOrders)
-			this.setState({
+
+			await filteredOrders.data.forEach((order, ordIndex) => {
+				order.pickedQty = order.orderItems.filter((line, lineIndex) => line.issued == "I" || line.issued == "Y").length
+				this.state.scheduleTotalLines = this.state.scheduleTotalLines + order.orderItems.length
+				this.state.scheduleTotalPicked = this.state.scheduleTotalPicked + order.pickedQty
+				this.state.scheduleAllPickedPercentage = Math.trunc((this.state.scheduleTotalPicked / this.state.scheduleTotalLines) * 100)
+				order.allPickedPercentage = Math.trunc((order.pickedQty / order.orderItems.length) * 100)
+				order.orderItems.forEach((line, lineIndex) => {
+					if (line.issued == "N" || line.issued == null  || line.issued == undefined) {
+						line.pickStatusMsg = "To Pick"
+					} else if (line.issued == "Y") {
+						line.pickStatusMsg = "Transferred"
+					} else if (line.issued == "I") {
+						line.pickStatusMsg = "Picked SAP"
+					}
+				})
+			})
+
+			await this.setState({
 					orders: filteredOrders.data
 			})
+
 	}
 	componentDidMount() {
 		this.getOpenOrders()
@@ -55,8 +76,6 @@ class Orders extends React.Component {
 			      id="noanim-tab-example"
 			      className="mb-1"
 						onSelect={(e) => {
-							console.log('CLICKED TAB')
-							console.log(e)
 							if (e == "KIT1" || e == "KIT2" || e == "KIT3") {
 								this.state.kittingRoute = e
 								this.state.completingRoute = null
@@ -73,9 +92,6 @@ class Orders extends React.Component {
 								this.state.despatchRoute = null
 								this.state.pageTitle = `${e} Despatch Schedule`
 							}
-							console.log(this.state.kittingRoute)
-							console.log(this.state.completingRoute)
-							console.log(this.state.despatchRoute)
 							this.getOpenOrders()
 						}
 					}
@@ -114,11 +130,19 @@ class Orders extends React.Component {
 						<div>
 						</div>
 					{/*HEADER SECTION*/}
+					<Form.Group className="px-4 py-1">
+					<Row>
+						<Form.Label>Schedule Progress</Form.Label>
+						<ProgressBar now={(this.state.scheduleTotalPicked / this.state.scheduleTotalLines) * 100} label={`${(this.state.scheduleTotalPicked / this.state.scheduleTotalLines) * 100}%`} />
+					</Row>
+					</Form.Group>
 					{/*ORDER SECTION*/}
 						<Accordion defaultActiveKey="1" alwaysOpen>
-							{this.state.orders.map((order, i) => (
-								<Accordion.Item eventKey={i} key={i} className="m-0 p-0" >
+							{this.state.orders.map((order, ordIndex) => (
+								<Accordion.Item eventKey={ordIndex} key={ordIndex} className="m-0 p-0" >
 									<Accordion.Header >
+									<Row>
+									<ProgressBar now={order.allPickedPercentage} label={`${order.allPickedPercentage}%`} className="py-1"/>
 									<Table striped bordered hover responsive size="sm" className="m-0 p-0">
 										<thead>
 											<tr>
@@ -143,14 +167,15 @@ class Orders extends React.Component {
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.completingDate}</td>
 												<td style={{width: '350px', margin: '0', padding: '0'}}>{order.customer.cardName}</td>
 												<td style={{width: '80px', margin: '0', padding: '0'}}>{order.orderItems.length} Lines</td>
-												<td style={{width: '80px', margin: '0', padding: '0'}}>0 Picked</td>
+												<td style={{width: '80px', margin: '0', padding: '0'}}>{order.pickedQty} Picked</td>
 											</tr>
 										</tbody>
 									</Table>
+									</Row>
 									</Accordion.Header>
 									<Accordion.Body>
-											<h3>Sales Order {order.docNum} Lines</h3>
-											<Form.Group controlId="formFileMultiple" className="m-3" size="sm">
+											<h3>Sales Order {order.docNum} Inventory Items to Pick </h3>
+											<Form.Group controlId="formFileMultiple" className="m-1" size="sm">
 											<Row>
 											<Col sm="2">
 												<Form.Label>Assembly Photos</Form.Label>
@@ -160,7 +185,6 @@ class Orders extends React.Component {
 											</Col>
 											</Row>
 											</Form.Group>
-
 											<Table striped bordered hover responsive size="sm">
 												<thead>
 													<tr>
@@ -170,12 +194,12 @@ class Orders extends React.Component {
 														<th>Stock Location</th>
 														<th>Required Qty</th>
 														<th>Issued Balance</th>
-														<th>Picked</th>
+														<th>Fully Picked</th>
 													</tr>
 												</thead>
 												<tbody>
-												{order.orderItems.map((line, i) => (
-													<tr key={i}>
+												{order.orderItems.map((line, lineIndex) => (
+													<tr key={lineIndex}>
 														<td>{line.lineNum}</td>
 														<td>{line.itemCode}</td>
 														<td>{line.itemDescription}</td>
@@ -183,11 +207,27 @@ class Orders extends React.Component {
 														<td>{line.qtyReq}</td>
 														<td>{line.issuedBalance}</td>
 														<td>
+
 															<Form.Check
-															type="checkBox"
-															label="Picked"
-															name="ConDespPerm"
-															value='4'
+															type="checkbox"
+															label={line.pickStatusMsg}
+															name="picked"
+															defaultChecked={line.issued == "Y" || line.issued == "I"}
+															id={lineIndex}
+															onClick={e => {
+																let setPickStatus = this.state.orders[ordIndex].orderItems[lineIndex]
+																if (e.target.checked == true && line.issued == "N") {
+																	setPickStatus.issued = "I"
+																} else
+																	if (e.target.checked == false && line.issued == "I" || e.target.checked == false && line.issued == "Y") {
+																		setPickStatus.issued = "N"
+																	}
+																setPickStatus.pickedStatus = e.target.checked
+																this.setState({setPickStatus})
+																console.log(order)
+																console.log(line)
+																}
+															}
 																/>
 														</td>
 													</tr>
