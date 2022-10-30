@@ -66,8 +66,8 @@ class Orders extends React.Component {
 		console.log(order.docNum)
 		console.log(order.orderItems)
 			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
-				console.log(updateOrder.data)
-				this.getOpenOrders()
+				await this.getOpenOrders()
+				console.log(this.state.orders[ordIndex])
 }
 	componentDidMount() {
 		this.getOpenOrders()
@@ -142,7 +142,7 @@ class Orders extends React.Component {
 					<Form.Group className="px-4 py-1">
 					<Row>
 						<Form.Label>Schedule Progress</Form.Label>
-						<ProgressBar now={(this.state.scheduleTotalPicked / this.state.scheduleTotalLines) * 100} label={`${(this.state.scheduleTotalPicked / this.state.scheduleTotalLines) * 100}%`} />
+						<ProgressBar now={this.state.scheduleAllPickedPercentage} label={`${this.state.scheduleAllPickedPercentage}%`} />
 					</Row>
 					</Form.Group>
 					{/*ORDER SECTION*/}
