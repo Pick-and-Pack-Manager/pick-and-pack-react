@@ -12,6 +12,7 @@ import Form from 'react-bootstrap/Form';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ProgressBar from 'react-bootstrap/ProgressBar';
+import Button from 'react-bootstrap/Button';
 
 class Orders extends React.Component {
   state = {
@@ -54,12 +55,30 @@ class Orders extends React.Component {
 					}
 				})
 			})
-
 			await this.setState({
 					orders: filteredOrders.data
 			})
-
 	}
+	updateOrder = async (order, e) => {
+		console.log('UPDATE Order')
+		console.log(order._id)
+		console.log(order.docNum)
+		console.log(order.orderItems)
+			// let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
+				// console.log(order)
+				let setSubState = this.state.order
+				// setSubState.id = updateUser.data.user.id
+				// setSubState.userFullName = fullName
+				// setSubState.firstName = updateUser.data.user.firstName
+				// setSubState.lastName = updateUser.data.user.lastName
+				// setSubState.email = updateUser.data.user.email
+				// setSubState.userName = updateUser.data.user.userName
+				// setSubState.password = updateUser.data.user.password
+				// setSubState.storedAccess = updateUser.data.user.storedAccess
+				// setSubState.userSupervisor = updateUser.data.user.supervisor
+				// this.setState({setSubState})
+
+}
 	componentDidMount() {
 		this.getOpenOrders()
 	}
@@ -183,8 +202,20 @@ class Orders extends React.Component {
 											<Col sm="3">
 												<Form.Control type="file" multiple />
 											</Col>
+											<Col sm="4">
+											</Col>
+											<Col>
+											<Button variant="primary" type="submit" onClick={(e) => {
+												console.log(e.target)
+												console.log(order)
+												e.preventDefault()
+												this.updateOrder(order)
+											}
+										}>Update Order in SAP</Button>
+											</Col>
 											</Row>
 											</Form.Group>
+
 											<Table striped bordered hover responsive size="sm">
 												<thead>
 													<tr>
