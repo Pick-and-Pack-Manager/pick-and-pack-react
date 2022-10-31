@@ -157,7 +157,7 @@ class Orders extends React.Component {
 					{/*ORDER SECTION*/}
 						<Accordion defaultActiveKey="1" alwaysOpen>
 							{this.state.orders.map((order, ordIndex) => (
-								<Accordion.Item eventKey={ordIndex} key={ordIndex} className="m-0 p-0" >
+								<Accordion.Item eventKey={"Ord_" + this.state.orders[ordIndex].docNum} key={ordIndex} className="m-0 p-0" >
 									<Accordion.Header >
 									<Row>
 									<ProgressBar now={order.allPickedPercentage} label={`${order.allPickedPercentage}%`} className="py-1"/>
@@ -230,7 +230,7 @@ class Orders extends React.Component {
 												</thead>
 												<tbody>
 												{order.orderItems.map((line, lineIndex) => (
-													<tr key={lineIndex}>
+													<tr key={"Table_" + this.state.orders[ordIndex].docNum + "-" + this.state.orders[ordIndex].orderItems[lineIndex].lineNum}>
 														<td>{line.lineNum}</td>
 														<td>{line.itemCode}</td>
 														<td>{line.itemDescription}</td>
@@ -243,8 +243,8 @@ class Orders extends React.Component {
 															type="checkbox"
 															label={line.pickStatusMsg}
 															name="picked"
-															defaultChecked={line.issued == "Y" || line.issued == "I"}
-															id={lineIndex}
+															defaultChecked={this.state.orders[ordIndex].orderItems[lineIndex].issued == "Y" || this.state.orders[ordIndex].orderItems[lineIndex].issued == "I"}
+															id={"Ord_" + this.state.orders[ordIndex].docNum + "-" + this.state.orders[ordIndex].orderItems[lineIndex].lineNum}
 															onClick={e => {
 																let setPickStatus = this.state.orders[ordIndex].orderItems[lineIndex]
 																if (e.target.checked == true && line.issued == "N") {
@@ -274,7 +274,7 @@ class Orders extends React.Component {
 															disabled={line.issued == "N" || localStorage.userId == line.pickedBy? true : false}
 															name="checked"
 															defaultChecked={line.checked == "Y"}
-															id={lineIndex}
+															id={"Ord_" + this.state.orders[ordIndex].docNum + "-" + this.state.orders[ordIndex].orderItems[lineIndex].lineNum}
 															onClick={e => {
 																let setCheckStatus = this.state.orders[ordIndex].orderItems[lineIndex]
 																if (e.target.checked == true && line.checked == "N" || e.target.checked == true && line.checked == null  || e.target.checked == true && line.checked == undefined) {
