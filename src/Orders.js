@@ -51,13 +51,23 @@ class Orders extends React.Component {
 					} else if (line.issued == "Y") {
 						line.pickStatusMsg = "Transferred"
 					} else if (line.issued == "I") {
-						line.pickStatusMsg = "Picked SAP"
+						line.pickStatusMsg = `Picked by ${line.pickedByName}`
+					}
+					if (line.issued == "N" || line.issued == null  || line.issued == undefined) {
+						line.checkStatusMsg = "Cant Check until Picked"
+					} else if (line.issued == "N" || localStorage.userId == line.pickedBy) {
+						line.checkStatusMsg = `Picker cannot Check`
+					} else if (line.checked =="N" || line.checked == null  || line.checked == undefined) {
+						line.checkStatusMsg = `Not Checked`
+					} else if (line.checked == "Y") {
+						line.checkStatusMsg = `Checked by ${line.checkedByName}`
 					}
 				})
 			})
 			await this.setState({
 					orders: filteredOrders.data
 			})
+			console.log(this.state.orders)
 	}
 	updateOrder = async (order, ordIndex) => {
 		console.log('UPDATE Order')
@@ -67,7 +77,6 @@ class Orders extends React.Component {
 		console.log(order.orderItems)
 			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
 				await this.getOpenOrders()
-				console.log(this.state.orders[ordIndex])
 }
 	componentDidMount() {
 		this.getOpenOrders()
@@ -216,6 +225,7 @@ class Orders extends React.Component {
 														<th>Required Qty</th>
 														<th>Issued Balance</th>
 														<th>Fully Picked</th>
+														<th>Checked</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -239,13 +249,50 @@ class Orders extends React.Component {
 																let setPickStatus = this.state.orders[ordIndex].orderItems[lineIndex]
 																if (e.target.checked == true && line.issued == "N") {
 																	setPickStatus.issued = "I"
+																	setPickStatus.pickedBy = localStorage.userId
+																	setPickStatus.pickedByName = localStorage.userFullName
+																	setPickStatus.pickedDate = Date.now()
 																} else
 																	if (e.target.checked == false && line.issued == "I" || e.target.checked == false && line.issued == "Y") {
 																		setPickStatus.issued = "N"
+																		setPickStatus.pickedBy = null
+																		setPickStatus.pickedDate = null
 																	}
 																setPickStatus.pickedStatus = e.target.checked
 																this.setState({setPickStatus})
-																console.log(order)
+																console.log(localStorage)
+																console.log(line)
+																}
+															}
+																/>
+														</td>
+														<td>
+
+															<Form.Check
+															type="checkbox"
+															label={line.checkStatusMsg}
+															disabled={line.issued == "N" || localStorage.userId == line.pickedBy? true : false}
+															name="checked"
+															defaultChecked={line.checked == "Y"}
+															id={lineIndex}
+															onClick={e => {
+																let setCheckStatus = this.state.orders[ordIndex].orderItems[lineIndex]
+																if (e.target.checked == true && line.checked == "N" || e.target.checked == true && line.checked == null  || e.target.checked == true && line.checked == undefined) {
+																	setCheckStatus.checked = "Y"
+																	setCheckStatus.checkedBy = localStorage.userId
+																	setCheckStatus.checkedByName = localStorage.userFullName
+																	setCheckStatus.checkedDate = Date.now()
+																	console.log('CHECKED')
+																} else
+																	if (e.target.checked == false && line.checked == "Y" || e.target.checked == false && line.checked == null  || e.target.checked == false && line.checked == undefined) {
+																		setCheckStatus.checked = "N"
+																		setCheckStatus.checkedBy = null
+																		setCheckStatus.checkedByName = null
+																		setCheckStatus.checkedDate = null
+																		console.log('NOT Checked')
+																	}
+																setCheckStatus.checkedStatus = e.target.checked
+																this.setState({setCheckStatus})
 																console.log(line)
 																}
 															}
