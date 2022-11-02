@@ -13,6 +13,8 @@ import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
+import {closeStyle} from 'simple-react-modal'
+import Modal from 'react-bootstrap/Modal'
 
 class Orders extends React.Component {
   state = {
@@ -26,7 +28,22 @@ class Orders extends React.Component {
 		selectedCompDate: null,
 		selectedKitDate: null,
 		selectedCustomer: null,
-		orders: []
+		orders: [],
+		show: false,
+		selectedLineDetails: {
+			lineNum: 0,
+			itemCode: 0,
+			itemDescription: 0,
+			qtyReq: 0,
+			issuedBalance: 0,
+			issued: 0,
+			delWhse: 0,
+			invWhse: 0,
+			pickedBy: 0,
+			pickedDate: 0,
+			checkedBy: 0,
+			checkedDate: 0,
+		}
 	}
 	getOpenOrders = async () => {
 		let findOrders = {
@@ -78,6 +95,26 @@ class Orders extends React.Component {
 			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
 				await this.getOpenOrders()
 }
+show(e){
+	this.state.selectedLineDetails.lineNum = e.lineNum
+	this.state.selectedLineDetails.itemCode = e.itemCode
+	this.state.selectedLineDetails.itemDescription = e.itemDescription
+	this.state.selectedLineDetails.qtyReq = e.qtyReq
+	this.state.selectedLineDetails.issuedBalance = e.issuedBalance
+	this.state.selectedLineDetails.issued = e.issued
+	this.state.selectedLineDetails.delWhse = e.delWhse
+	this.state.selectedLineDetails.invWhse = e.invWhse
+	this.state.selectedLineDetails.pickedBy = e.pickedByName
+	this.state.selectedLineDetails.pickedDate = e.pickedDate
+	this.state.selectedLineDetails.checkedBy = e.checkedByName
+	this.state.selectedLineDetails.checkedDate = e.checkedDate
+	this.setState({show: true})
+	console.log(this.state.selectedLineDetails)
+}
+
+close(){
+	this.setState({show: false})
+}
 	componentDidMount() {
 		this.getOpenOrders()
 	}
@@ -87,6 +124,23 @@ class Orders extends React.Component {
 				localStorage.storedAccess >= 'B' ?
 				<>
 					<Nav />
+						<Modal
+						containerClassName="test"
+						closeOnOuterClick={true}
+						show={this.state.show}
+						onClose={this.close.bind(this)}>
+							<Modal.Header>
+		          <Modal.Title>Line Details</Modal.Title>
+		        	</Modal.Header>
+							<Modal.Body>
+								{this.state.selectedLineDetails.lineNum}
+							</Modal.Body>
+							<Modal.Footer>
+							<Button variant="secondary" onClick={this.close.bind(this)}>
+								Close
+							</Button>
+							</Modal.Footer>
+						</Modal>
 					{/*PAGE SELECTION*/}
 					<Tabs
 			      defaultActiveKey="KIT1"
@@ -155,6 +209,7 @@ class Orders extends React.Component {
 					</Row>
 					</Form.Group>
 					{/*ORDER SECTION*/}
+
 						<Accordion defaultActiveKey="1" alwaysOpen>
 							{this.state.orders.map((order, ordIndex) => (
 								<Accordion.Item eventKey={"Ord_" + this.state.orders[ordIndex].docNum} key={ordIndex} className="m-0 p-0" >
@@ -297,6 +352,14 @@ class Orders extends React.Component {
 																}
 															}
 																/>
+														</td>
+														<td>
+														<div>
+												      <Button onClick={(e) => {
+																this.show(line)
+															}
+															}>Details</Button>
+												      </div>
 														</td>
 													</tr>
 													))}
