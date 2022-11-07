@@ -15,6 +15,7 @@ import ProgressBar from 'react-bootstrap/ProgressBar';
 import Button from 'react-bootstrap/Button';
 import {closeStyle} from 'simple-react-modal'
 import Modal from 'react-bootstrap/Modal'
+import moment from 'moment';
 
 class Orders extends React.Component {
   state = {
@@ -65,19 +66,22 @@ class Orders extends React.Component {
 				order.orderItems.forEach((line, lineIndex) => {
 					if (line.issued == "N" || line.issued == null  || line.issued == undefined) {
 						line.pickStatusMsg = "To Pick"
+						line.transferStatus = "Not Picked"
 					} else if (line.issued == "Y") {
-						line.pickStatusMsg = "Transferred"
+						line.pickStatusMsg = `Issued - picked on ${moment(line.pickedDate).format('DD-MM-YYYY')}`
+						line.transferStatus = "Transfered in SAP"
 					} else if (line.issued == "I") {
-						line.pickStatusMsg = `Picked by ${line.pickedByName}`
+						line.pickStatusMsg = `Picked on ${moment(line.pickedDate).format('DD-MM-YYYY')}`
+						line.transferStatus = "Picked not Transfered"
 					}
 					if (line.issued == "N" || line.issued == null  || line.issued == undefined) {
 						line.checkStatusMsg = "Cant Check until Picked"
-					} else if (line.issued == "N" || localStorage.userId == line.pickedBy) {
+					} else if (line.checked == "N" && localStorage.userId == line.pickedBy || line.checked == null && localStorage.userId == line.pickedBy || line.checked == undefined && localStorage.userId == line.pickedBy) {
 						line.checkStatusMsg = `Picker cannot Check`
 					} else if (line.checked =="N" || line.checked == null  || line.checked == undefined) {
 						line.checkStatusMsg = `Not Checked`
 					} else if (line.checked == "Y") {
-						line.checkStatusMsg = `Checked by ${line.checkedByName}`
+						line.checkStatusMsg = `Checked on ${moment(line.checkedDate).format('DD-MM-YYYY')}`
 					}
 				})
 			})
@@ -90,11 +94,18 @@ class Orders extends React.Component {
 		console.log('UPDATE Order')
 		console.log(ordIndex)
 		console.log(order._id)
-		console.log(order.docNum)
+		console.log(order)
 		console.log(order.orderItems)
 			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
 				await this.getOpenOrders()
 }
+	findActiveStaff = async () => {
+				let staffUsers = await axios.get(`http://localhost:4420/users/staff`,
+					{}, {withCredentials: true})
+					let filteredUsers = staffUsers.data.filter((user) => user.permission > "B" && user.permission != "Z")
+					this.state.activeStaff = filteredUsers
+					console.log(this.state.activeStaff)
+	}
 show(e){
 	this.state.selectedLineDetails.lineNum = e.lineNum
 	this.state.selectedLineDetails.itemCode = e.itemCode
@@ -108,6 +119,7 @@ show(e){
 	this.state.selectedLineDetails.pickedDate = e.pickedDate
 	this.state.selectedLineDetails.checkedBy = e.checkedByName
 	this.state.selectedLineDetails.checkedDate = e.checkedDate
+	this.state.selectedLineDetails.transferStatus = e.transferStatus
 	this.setState({show: true})
 	console.log(this.state.selectedLineDetails)
 }
@@ -117,6 +129,7 @@ close(){
 }
 	componentDidMount() {
 		this.getOpenOrders()
+		this.findActiveStaff()
 	}
 
   render() {
@@ -124,7 +137,7 @@ close(){
 				localStorage.storedAccess >= 'B' ?
 				<>
 					<Nav />
-						<Modal
+						<Modal size="lg"
 						containerClassName="test"
 						closeOnOuterClick={true}
 						show={this.state.show}
@@ -133,7 +146,55 @@ close(){
 		          <Modal.Title>Line Details</Modal.Title>
 		        	</Modal.Header>
 							<Modal.Body>
-								{this.state.selectedLineDetails.lineNum}
+								<div><strong>Line {this.state.selectedLineDetails.lineNum} - {this.state.selectedLineDetails.itemCode} - {this.state.selectedLineDetails.itemDescription}</strong></div>
+								<Table striped bordered hover>
+					      <thead>
+									<tr>
+										<th>Picking Route</th>
+										<th>Planned Date</th>
+										<th>Picked By</th>
+										<th>Picked Date</th>
+										<th>Checked By</th>
+										<th>Checked Date</th>
+									</tr>
+					      </thead>
+					      <tbody>
+					        <tr>
+					          <td>{this.state.selectedLineDetails.pickRoute}</td>
+					          <td>{moment(this.state.selectedLineDetails.plannedDate).format('MMMM Do YYYY, h:mm:ss a')}</td>
+										<td>{this.state.selectedLineDetails.pickedBy}</td>
+					          <td>{moment(this.state.selectedLineDetails.pickedDate).format('MMMM Do YYYY, h:mm:ss a')}</td>
+					          <td>{this.state.selectedLineDetails.checkedBy}</td>
+					          <td>{moment(this.state.selectedLineDetails.checkedDate).format('MMMM Do YYYY, h:mm:ss a')}</td>
+					        </tr>
+					      </tbody>
+					    </Table>
+							<div><strong>Inventory Details</strong></div>
+							<Table striped bordered hover>
+							<thead>
+								<tr>
+									<th>Required Qty</th>
+									<th>Stock Warehouse</th>
+									<th>Stock in Whse</th>
+									<th>Del Warehouse</th>
+									<th>Issue Status</th>
+									<th>Not Transfered</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>{this.state.selectedLineDetails.qtyReq}</td>
+									<td>{this.state.selectedLineDetails.invWhse}</td>
+									<td>{this.state.selectedLineDetails.linestock}</td>
+									<td>{this.state.selectedLineDetails.delWhse}</td>
+									<td>
+									{this.state.selectedLineDetails.transferStatus}
+									</td>
+									<td>{this.state.selectedLineDetails.issuedBalance}</td>
+								</tr>
+							</tbody>
+						</Table>
+
 							</Modal.Body>
 							<Modal.Footer>
 							<Button variant="secondary" onClick={this.close.bind(this)}>
@@ -190,16 +251,9 @@ close(){
 						</Tab>
 			    </Tabs>
 					<h1>{this.state.pageTitle}</h1>
-					{/*SCHEDULING SECTION*/}
-						<Accordion defaultActiveKey="0">
-							<Accordion.Item eventKey="0">
-								<Accordion.Header >Scheduling Charts</Accordion.Header>
-								<Accordion.Body>
-								</Accordion.Body>
-								</Accordion.Item>
-						</Accordion>
 					{/*FILTER SECTION*/}
 						<div>
+						<input type="date" className="mx-4"/>
 						</div>
 					{/*HEADER SECTION*/}
 					<Form.Group className="px-4 py-1">
@@ -233,11 +287,11 @@ close(){
 										<tbody>
 											<tr>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.docNum}</td>
-												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.docDueDate}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{moment(order.docDueDate).format('DD MMM YYYY')}</td>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.kittingRoute}</td>
-												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.kittingDate}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{moment(order.kittingDate).format('DD MMM YYYY')}</td>
 												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.completingRoute}</td>
-												<td style={{width: '100px', margin: '0', padding: '0'}}>{order.completingDate}</td>
+												<td style={{width: '100px', margin: '0', padding: '0'}}>{moment(order.completingDate).format('DD MMM YYYY')}</td>
 												<td style={{width: '350px', margin: '0', padding: '0'}}>{order.customer.cardName}</td>
 												<td style={{width: '80px', margin: '0', padding: '0'}}>{order.orderItems.length} Lines</td>
 												<td style={{width: '80px', margin: '0', padding: '0'}}>{order.pickedQty} Picked</td>
@@ -257,6 +311,7 @@ close(){
 												<Form.Control type="file" multiple />
 											</Col>
 											<Col sm="4">
+
 											</Col>
 											<Col>
 											<Button variant="primary" type="submit" onClick={(e) => {
@@ -276,11 +331,13 @@ close(){
 														<th>Line #</th>
 														<th>Item Code</th>
 														<th>Item Description</th>
+														<th>Pick Route</th>
 														<th>Stock Location</th>
 														<th>Required Qty</th>
 														<th>Issued Balance</th>
 														<th>Fully Picked</th>
 														<th>Checked</th>
+														<th>Item Details</th>
 													</tr>
 												</thead>
 												<tbody>
@@ -289,6 +346,7 @@ close(){
 														<td>{line.lineNum}</td>
 														<td>{line.itemCode}</td>
 														<td>{line.itemDescription}</td>
+														<td></td>
 														<td>{line.invWhse}</td>
 														<td>{line.qtyReq}</td>
 														<td>{line.issuedBalance}</td>
@@ -326,7 +384,7 @@ close(){
 															<Form.Check
 															type="checkbox"
 															label={line.checkStatusMsg}
-															disabled={line.issued == "N" || localStorage.userId == line.pickedBy? true : false}
+															disabled={localStorage.userId == line.pickedBy || this.state.orders[ordIndex].orderItems[lineIndex].issued == "N" ? true : false}
 															name="checked"
 															defaultChecked={line.checked == "Y"}
 															id={"Ord_" + this.state.orders[ordIndex].docNum + "-" + this.state.orders[ordIndex].orderItems[lineIndex].lineNum}
