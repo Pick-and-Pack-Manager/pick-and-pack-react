@@ -19,6 +19,9 @@ import moment from 'moment';
 
 class Orders extends React.Component {
   state = {
+		kittingDate: moment(Date.now()).format('YYYY-MM-DD'),
+		completingDate: null,
+		despatchDate: null,
 		scheduleTotalLines: 0,
 		scheduleTotalPicked: 0,
 		pageTitle: "KIT1 Kitting Schedule",
@@ -48,9 +51,12 @@ class Orders extends React.Component {
 	}
 	getOpenOrders = async () => {
 		let findOrders = {
+			kittingDate: this.state.kittingDate,
 			kittingRoute: this.state.kittingRoute,
+			completingDate: this.state.completingDate,
 			completingRoute: this.state.completingRoute,
-			despatchRoute: this.state.despatchRoute
+			despatchDate: this.state.despatchDate,
+			despatchRoute: this.state.despatchRoute,
 		}
 		let orders = await axios.post(`http://localhost:4420/orders`,
 			findOrders, {withCredentials: true})
@@ -130,6 +136,7 @@ close(){
 	componentDidMount() {
 		this.getOpenOrders()
 		this.findActiveStaff()
+		console.log(this.state)
 	}
 
   render() {
@@ -210,19 +217,28 @@ close(){
 			      className="mb-1"
 						onSelect={(e) => {
 							if (e == "KIT1" || e == "KIT2" || e == "KIT3") {
+								this.state.kittingDate = moment(Date.now()).format('YYYY-MM-DD')
 								this.state.kittingRoute = e
+								this.state.completingDate = null
 								this.state.completingRoute = null
+								this.state.despatchDate = null
 								this.state.despatchRoute = null
 								this.state.pageTitle = `${e} Kitting Schedule`
 							} else if (e == "COM1" || e == "COM2" || e == "COM3") {
+								this.state.kittingDate = null
 								this.state.kittingRoute = null
+								this.state.completingDate = moment(Date.now()).format('YYYY-MM-DD')
 								this.state.completingRoute = e
+								this.state.despatchDate = null
 								this.state.despatchRoute = null
 								this.state.pageTitle = `${e} Completing Schedule`
 							} else if (e == "DESP1" || e == "DESP2") {
+								this.state.kittingDate = null
 								this.state.kittingRoute = null
+								this.state.completingDate = null
 								this.state.completingRoute = null
-								this.state.despatchRoute = null
+								this.state.despatchDate = moment(Date.now()).format('YYYY-MM-DD')
+								this.state.despatchRoute = e
 								this.state.pageTitle = `${e} Despatch Schedule`
 							}
 							this.getOpenOrders()
