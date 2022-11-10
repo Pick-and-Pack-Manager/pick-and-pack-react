@@ -19,11 +19,14 @@ import moment from 'moment';
 
 class Orders extends React.Component {
   state = {
+		selectedDate: moment(Date.now()).format('YYYY-MM-DD'),
+		selectedRoute: "KIT1",
 		kittingDate: moment(Date.now()).format('YYYY-MM-DD'),
 		completingDate: null,
 		despatchDate: null,
 		scheduleTotalLines: 0,
 		scheduleTotalPicked: 0,
+		scheduleAllPickedPercentage: 0,
 		pageTitle: "KIT1 Kitting Schedule",
 		kittingRoute: "KIT1",
 		completingRoute: null,
@@ -61,9 +64,8 @@ class Orders extends React.Component {
 		let orders = await axios.post(`http://localhost:4420/orders`,
 			findOrders, {withCredentials: true})
 			// let filteredOrders = orders.data.filter(order => order)
-			let filteredOrders = orders
 
-			await filteredOrders.data.forEach((order, ordIndex) => {
+			await orders.data.forEach((order, ordIndex) => {
 				order.pickedQty = order.orderItems.filter((line, lineIndex) => line.issued == "I" || line.issued == "Y").length
 				this.state.scheduleTotalLines = this.state.scheduleTotalLines + order.orderItems.length
 				this.state.scheduleTotalPicked = this.state.scheduleTotalPicked + order.pickedQty
@@ -92,16 +94,16 @@ class Orders extends React.Component {
 				})
 			})
 			await this.setState({
-					orders: filteredOrders.data
+					orders: orders.data
 			})
-			console.log(this.state.orders)
+			console.log(this.state)
 	}
 	updateOrder = async (order, ordIndex) => {
-		console.log('UPDATE Order')
-		console.log(ordIndex)
-		console.log(order._id)
-		console.log(order)
-		console.log(order.orderItems)
+		// console.log('UPDATE Order')
+		// console.log(ordIndex)
+		// console.log(order._id)
+		// console.log(order)
+		// console.log(order.orderItems)
 			let updateOrder = await axios.patch(`http://localhost:4420/orders`, {order}, {withCredentials: true})
 				await this.getOpenOrders()
 }
@@ -110,7 +112,7 @@ class Orders extends React.Component {
 					{}, {withCredentials: true})
 					let filteredUsers = staffUsers.data.filter((user) => user.permission > "B" && user.permission != "Z")
 					this.state.activeStaff = filteredUsers
-					console.log(this.state.activeStaff)
+					// console.log(this.state.activeStaff)
 	}
 show(e){
 	this.state.selectedLineDetails.lineNum = e.lineNum
@@ -217,29 +219,41 @@ close(){
 			      className="mb-1"
 						onSelect={(e) => {
 							if (e == "KIT1" || e == "KIT2" || e == "KIT3") {
-								this.state.kittingDate = moment(Date.now()).format('YYYY-MM-DD')
+								this.state.selectedRoute = e
+								this.state.kittingDate = this.state.selectedDate
 								this.state.kittingRoute = e
 								this.state.completingDate = null
 								this.state.completingRoute = null
 								this.state.despatchDate = null
 								this.state.despatchRoute = null
 								this.state.pageTitle = `${e} Kitting Schedule`
+								this.state.scheduleTotalLines = 0
+								this.state.scheduleTotalPicked = 0
+								this.state.scheduleAllPickedPercentage = 0
 							} else if (e == "COM1" || e == "COM2" || e == "COM3") {
+								this.state.selectedRoute = e
 								this.state.kittingDate = null
 								this.state.kittingRoute = null
-								this.state.completingDate = moment(Date.now()).format('YYYY-MM-DD')
+								this.state.completingDate = this.state.selectedDate
 								this.state.completingRoute = e
 								this.state.despatchDate = null
 								this.state.despatchRoute = null
 								this.state.pageTitle = `${e} Completing Schedule`
+								this.state.scheduleTotalLines = 0
+								this.state.scheduleTotalPicked = 0
+								this.state.scheduleAllPickedPercentage = 0
 							} else if (e == "DESP1" || e == "DESP2") {
+								this.state.selectedRoute = e
 								this.state.kittingDate = null
 								this.state.kittingRoute = null
 								this.state.completingDate = null
 								this.state.completingRoute = null
-								this.state.despatchDate = moment(Date.now()).format('YYYY-MM-DD')
+								this.state.despatchDate = this.state.selectedDate
 								this.state.despatchRoute = e
 								this.state.pageTitle = `${e} Despatch Schedule`
+								this.state.scheduleTotalLines = 0
+								this.state.scheduleTotalPicked = 0
+								this.state.scheduleAllPickedPercentage = 0
 							}
 							this.getOpenOrders()
 						}
@@ -269,7 +283,58 @@ close(){
 					<h1>{this.state.pageTitle}</h1>
 					{/*FILTER SECTION*/}
 						<div>
-						<input type="date" className="mx-4"/>
+						<input type="date" className="mx-4" value={this.state.selectedDate} onChange={async (e) => {
+							if (!e.target.value) {
+							    console.log('Input type date is empty');
+									this.state.selectedDate = null
+									this.state.scheduleTotalLines = 0
+									this.state.scheduleTotalPicked = 0
+									this.state.scheduleAllPickedPercentage = 0
+									if (this.state.selectedRoute == "KIT1" || this.state.selectedRoute == "KIT2" || this.state.selectedRoute == "KIT3" ) {await this.setState({
+										kittingDate: null,
+										completingDate: null,
+										despatchDate: null,
+									})}
+									if (this.state.selectedRoute == "COM1" || this.state.selectedRoute == "COM2" || this.state.selectedRoute == "COM3" ) {await this.setState({
+										kittingDate: null,
+										completingDate: null,
+										despatchDate: null,
+									})}
+									if (this.state.selectedRoute == "DESP1")
+									{await this.setState({
+										kittingDate: null,
+										completingDate: null,
+										despatchDate: null,
+									})
+								}
+							  } else {
+							    console.log('Input type date is NOT empty');
+							    console.log(e.target.value);
+									this.state.selectedDate = e.target.value
+									this.state.scheduleTotalLines = 0
+									this.state.scheduleTotalPicked = 0
+									this.state.scheduleAllPickedPercentage = 0
+									if (this.state.selectedRoute == "KIT1" || this.state.selectedRoute == "KIT2" || this.state.selectedRoute == "KIT3" ) {await this.setState({
+										kittingDate: this.state.selectedDate,
+										completingDate: null,
+										despatchDate: null,
+									})}
+									if (this.state.selectedRoute == "COM1" || this.state.selectedRoute == "COM2" || this.state.selectedRoute == "COM3" ) {await this.setState({
+										kittingDate: null,
+										completingDate: this.state.selectedDate,
+										despatchDate: null,
+									})}
+									if (this.state.selectedRoute == "DESP1")
+									{await this.setState({
+										kittingDate: null,
+										completingDate: null,
+										despatchDate: this.state.selectedDate,
+									})
+								}
+							  }
+
+						await this.getOpenOrders()
+						}}/>
 						</div>
 					{/*HEADER SECTION*/}
 					<Form.Group className="px-4 py-1">
