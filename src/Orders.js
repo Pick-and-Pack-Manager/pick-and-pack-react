@@ -63,8 +63,6 @@ class Orders extends React.Component {
 		}
 		let orders = await axios.post(`http://localhost:4420/orders`,
 			findOrders, {withCredentials: true})
-			// let filteredOrders = orders.data.filter(order => order)
-
 			await orders.data.forEach((order, ordIndex) => {
 				order.pickedQty = order.orderItems.filter((line, lineIndex) => line.issued == "I" || line.issued == "Y").length
 				this.state.scheduleTotalLines = this.state.scheduleTotalLines + order.orderItems.length
@@ -93,9 +91,21 @@ class Orders extends React.Component {
 					}
 				})
 			})
+			if (this.state.selectedRoute == "KIT1" || this.state.selectedRoute == "KIT2" || this.state.selectedRoute == "KIT3") {
+				this.state.orders = orders.data.sort((a, b) => new Date(a.kittingDate) - new Date(b.kittingDate)
+				)
+			} else if (this.state.selectedRoute == "COM1" || this.state.selectedRoute == "COM2" || this.state.selectedRoute == "COM3") {
+				this.state.orders = orders.data.sort((a, b) => new Date(a.completingDate) - new Date(b.completingDate)
+				)
+			} else {
+				this.state.orders = orders.data.sort((a, b) => new Date(a.despatchDate) - new Date(b.despatchDate)
+				)
+			}
 			await this.setState({
-					orders: orders.data
+					orders: this.state.orders
 			})
+
+
 			console.log(this.state)
 	}
 	updateOrder = async (order, ordIndex) => {
