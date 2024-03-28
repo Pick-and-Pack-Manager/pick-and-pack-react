@@ -18,14 +18,18 @@ import Table from "react-bootstrap/Table"
 
 class Inventory extends React.Component {
   state = {
-		inventory: null
+		inventory: null,
+		inventoryCount: 0
 	};
 	getInventory = async () => {
 				let inventoryData = await axios.get(`http://localhost:4420/inventory`,
 					{}, {withCredentials: true})
 					console.log(inventoryData.data)
 					this.setState(
-						{inventory: inventoryData.data}
+						{
+							inventory: inventoryData.data,
+							inventoryCount: inventoryData.data.length
+						}
 					)
 
 			}
@@ -35,7 +39,11 @@ class Inventory extends React.Component {
 			}
 			render() {
 		  return (
-		    <div>
+				<body>
+				<h1>
+				Returned Items: {this.state.inventoryCount}
+				</h1>
+				<div>
 		      {this.state.inventory && this.state.inventory.map(item => (
 		        <div key={item}>
 		          <p>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
@@ -49,6 +57,7 @@ class Inventory extends React.Component {
 		        </div>
 		      ))}
 		    </div>
+				</body>
 		  );
 		}
 			}
