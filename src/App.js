@@ -16,6 +16,7 @@ import Orders from "./Orders";
 import Shipment from "./Shipment";
 import Nav from "./NavComponent";
 import Profile from "./Profile";
+import Inventory from "./Inventory";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
@@ -63,6 +64,7 @@ class App extends React.Component {
           <Route path="/orders" component={Orders} loggedIn={this.state.loggedIn}/>
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
+					<Route path="/inventory" component={Inventory} />
         </Switch>
       </Router>
     );
