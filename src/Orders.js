@@ -34,7 +34,7 @@ class Orders extends React.Component {
 		selectedDespDate: null,
 		selectedCompDate: null,
 		selectedKitDate: null,
-		selectedCustomer: null,
+		selectedDealer: null,
 		orders: [],
 		show: false,
 		selectedLineDetails: {
@@ -370,7 +370,7 @@ close(){
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Kitting Date</th>
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Completing Route</th>
 												<th style={{width: '100px', margin: '0', padding: '0'}}>Completing Date</th>
-												<th style={{width: '350px', margin: '0', padding: '0'}}>Customer</th>
+												<th style={{width: '350px', margin: '0', padding: '0'}}>Dealer</th>
 												<th style={{width: '80px', margin: '0', padding: '0'}}>Order Lines</th>
 												<th style={{width: '80px', margin: '0', padding: '0'}}>Lines Picked</th>
 											</tr>
