@@ -59,26 +59,44 @@ class Inventory extends React.Component {
  				const warehouseEntries = this.state.whsTotals ? Object.entries(this.state.whsTotals) : [];
 		  return (
 				<body>
-				<h1>
-				Returned Items: {this.state.inventoryCount},
-        Inventory Value: ${this.state.totalInventoryValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
-				<hr />
-				</h1>
-				<div>
-		      {this.state.inventory && this.state.inventory.map(item => (
-		        <div key={item}>
-		          <p style={{ margin: '2px' }}>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
-							<b style={{ margin: '2px' }}>Code: {item.ItemCode}</b>
-							<p style={{ margin: '2px' }}>Description: {item.itemName}</p>
-							<p style={{ margin: '2px' }}>Group: {item.itmsGrpNam}</p>
-							<p style={{ margin: '2px' }}>Whse: {item.WhsCode}</p>
-		          <b style={{ margin: '2px' }}>Qty: {item.OnHand}</b>
-							<p style={{ margin: '2px' }}>StockValue: {item.StockValue}</p>
-		          {/* Add additional properties rendering as needed */}
-							<hr />
-		        </div>
-		      ))}
-		    </div>
+					<h1>
+					Returned Items: {this.state.inventoryCount},
+	        Inventory Value: ${this.state.totalInventoryValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+					</h1>
+					<hr />
+								{/* Warehouse Totals Table */}
+			      <Table striped bordered hover>
+			        <thead>
+			          <tr>
+			            <th>Warehouse Code</th>
+			            <th>Total Stock Value</th>
+			          </tr>
+			        </thead>
+			        <tbody>
+			          {warehouseEntries.map(([whsCode, totalValue], index) => (
+			            <tr key={index}>
+			              <td>{whsCode}</td>
+			              <td>${totalValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</td>
+			            </tr>
+			          ))}
+			        </tbody>
+			      </Table>
+			      {/* Existing Inventory Items List */}
+								<div>
+			      {this.state.inventory && this.state.inventory.map(item => (
+			        <div key={item}>
+			          <p style={{ margin: '2px' }}>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
+								<b style={{ margin: '2px' }}>Code: {item.ItemCode}</b>
+								<p style={{ margin: '2px' }}>Description: {item.itemName}</p>
+								<p style={{ margin: '2px' }}>Group: {item.itmsGrpNam}</p>
+								<p style={{ margin: '2px' }}>Whse: {item.WhsCode}</p>
+			          <b style={{ margin: '2px' }}>Qty: {item.OnHand}</b>
+								<p style={{ margin: '2px' }}>StockValue: {item.StockValue}</p>
+			          {/* Add additional properties rendering as needed */}
+								<hr />
+			        </div>
+			      ))}
+			    </div>
 				</body>
 		  );
 		}
