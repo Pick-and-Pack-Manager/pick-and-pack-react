@@ -19,16 +19,33 @@ import Table from "react-bootstrap/Table"
 class Inventory extends React.Component {
   state = {
 		inventory: null,
-		inventoryCount: 0
+		inventoryCount: 0,
+		totalInventoryValue: 0, // Set the total inventory value in the state
+		whsTotals: null, // Set the total inventory value in the state
 	};
 	getInventory = async () => {
 				let inventoryData = await axios.get(`http://localhost:4420/inventory`,
 					{}, {withCredentials: true})
 					console.log(inventoryData.data)
+
+					// Calculate total inventory value assuming stockValue is already a number
+					const totalValue = inventoryData.data.reduce((acc, item) => acc + item.StockValue, 0);
+
+					// Initialize an object to hold the total StockValue for each WhsCode
+				  const whsTotals = {};
+				  inventoryData.data.forEach(item => {
+				    if (!whsTotals[item.WhsCode]) {
+				      whsTotals[item.WhsCode] = 0;
+				    }
+				    whsTotals[item.WhsCode] += item.StockValue;
+				  });
+
 					this.setState(
 						{
 							inventory: inventoryData.data,
-							inventoryCount: inventoryData.data.length
+							inventoryCount: inventoryData.data.length,
+							totalInventoryValue: totalValue, // Set the total inventory value in the state
+							whsTotals: whsTotals
 						}
 					)
 
@@ -38,22 +55,27 @@ class Inventory extends React.Component {
 				console.log(this.state.inventory)
 			}
 			render() {
+				// Ensure whsTotals is an object before proceeding
+ 				const warehouseEntries = this.state.whsTotals ? Object.entries(this.state.whsTotals) : [];
 		  return (
 				<body>
 				<h1>
-				Returned Items: {this.state.inventoryCount}
+				Returned Items: {this.state.inventoryCount},
+        Inventory Value: ${this.state.totalInventoryValue.toLocaleString('en-US', {minimumFractionDigits: 2, maximumFractionDigits: 2})}
+				<hr />
 				</h1>
 				<div>
 		      {this.state.inventory && this.state.inventory.map(item => (
 		        <div key={item}>
-		          <p>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
-							<p>Code: {item.ItemCode}</p>
-							<p>Description: {item.itemName}</p>
-							<p>Group: {item.itmsGrpNam}</p>
-							<p>Whse: {item.WhsCode}</p>
-		          <p>Qty: {item.OnHand}</p>
-							<p>StockValue: {item.StockValue}</p>
+		          <p style={{ margin: '2px' }}>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
+							<b style={{ margin: '2px' }}>Code: {item.ItemCode}</b>
+							<p style={{ margin: '2px' }}>Description: {item.itemName}</p>
+							<p style={{ margin: '2px' }}>Group: {item.itmsGrpNam}</p>
+							<p style={{ margin: '2px' }}>Whse: {item.WhsCode}</p>
+		          <b style={{ margin: '2px' }}>Qty: {item.OnHand}</b>
+							<p style={{ margin: '2px' }}>StockValue: {item.StockValue}</p>
 		          {/* Add additional properties rendering as needed */}
+							<hr />
 		        </div>
 		      ))}
 		    </div>
