@@ -17,6 +17,7 @@ import Shipment from "./Shipment";
 import Nav from "./NavComponent";
 import Profile from "./Profile";
 import Inventory from "./Inventory";
+import OrderQuery from "./OrderQuery";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 class App extends React.Component {
@@ -65,6 +66,7 @@ class App extends React.Component {
           <Route path="/order/packing/:id" component={Order} />
           <Route path="/order/shipment/:id" component={Shipment} />
 					<Route path="/inventory" component={Inventory} />
+					<Route path="/orderQuery" component={OrderQuery} />
         </Switch>
       </Router>
     );
