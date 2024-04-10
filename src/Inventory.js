@@ -84,7 +84,7 @@ class Inventory extends React.Component {
 			      {/* Existing Inventory Items List */}
 								<div>
 			      {this.state.inventory && this.state.inventory.map(item => (
-			        <div key={item}>
+			        <div key={item.WhsCode + '-' + item.ItemCode}>
 			          <p style={{ margin: '2px' }}>WhseItemkey: {item.WhsCode + '-' + item.ItemCode}</p>
 								<b style={{ margin: '2px' }}>Code: {item.ItemCode}</b>
 								<p style={{ margin: '2px' }}>Description: {item.itemName}</p>
